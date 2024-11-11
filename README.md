@@ -21,12 +21,7 @@ I successfully completed an assignment for PerceptVentures, where I developed a 
 - **Continuous Audio Streaming**: Used FastAPI to handle continuous streams of audio, enabling real-time processing and interaction.
 
 
-
-
-This is the user's login page. Here, you can login and create your new account and even change the password of your account.
-
-
-After opening app.py file, the main html page will directly be open. Here’s a sneak peek of the continued conversation between me and my chatbot.
+After opening app.py file, the main html page will directly be open. Here’s a sneak peek of the continued conversation between me and my assistant.
 <p align="center">
 <img src="images/frontend1.png" alt="Image 1" style="height: 350px; width: 500px"><br>
 </p>
@@ -83,4 +78,7 @@ Then for starting application first start the fastapi server i.e., main_server.p
      python websocket.py &
      python app.py
 ```
-and don't forget to add your api_key as environment variable.
+and don't forget to add your api_key as environment variable. You can also use .env file and python-dotenv library to load environment variable
+create .env file
+```
+OPENAI_API_KEY = your_api_key
