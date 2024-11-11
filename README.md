@@ -64,10 +64,22 @@ After opening app.py file, the main html page will directly be open. Here are th
 
 ## Setup Instruction
 - ### Clone the Repository 
-     If you have a repository for your project, clone it using git: 
-     ```bash git clone https://github.com/Akshat2512/AI-ChatBot.git 
+If you have a repository for your project, clone it using git: 
+     ```bash 
+     git clone https://github.com/Akshat2512/AI_Voice_Assistant.git 
+     cd AI_Voice_Assistant # move to root folder of the application
+If you want to create separate virtual environment for python
+     ```bash
+     my_env/Script/activate
+     
+Then install required libraries
+     ```bash
+     pip install -r requirements.txt
 
- cd AI_Voice_Assistant
+Then for starting application first start the fastapi server i.e., websocket.py then run the app.py
+     ```bash
+     python websocket.py &
+     python app.py
 
 
 - ### Setup OpenAI API Key
