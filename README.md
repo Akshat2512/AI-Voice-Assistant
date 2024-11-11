@@ -21,12 +21,12 @@ I successfully completed an assignment for PerceptVentures, where I developed a 
 - **Continuous Audio Streaming**: Used FastAPI to handle continuous streams of audio, enabling real-time processing and interaction.
 
 
-Here’s a sneak peek of the UI design: 
+
 
 This is the user's login page. Here, you can login and create your new account and even change the password of your account.
 
 
-After opening app.py file, the main html page will directly be open. Here are the continued conversation between me and my chatbot.
+After opening app.py file, the main html page will directly be open. Here’s a sneak peek of the continued conversation between me and my chatbot.
 <p align="center">
 <img src="images/frontend1.png" alt="Image 1" style="height: 350px; width: 500px"><br>
 </p>
@@ -70,7 +70,7 @@ If you have a repository for your project, clone it using git:
      cd AI_Voice_Assistant # move to the root folder of the application
 ```
 If you want to create separate virtual environment for python
-```sh
+```shell
      my_env/Script/activate
 ```
 Then install required libraries
