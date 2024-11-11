@@ -65,20 +65,20 @@ After opening app.py file, the main html page will directly be open. Here are th
 ## Setup Instruction
 - ### Clone the Repository 
 If you have a repository for your project, clone it using git: 
-```bash 
+```sh 
      git clone https://github.com/Akshat2512/AI_Voice_Assistant.git 
-     cd AI_Voice_Assistant # move to root folder of the application
+     cd AI_Voice_Assistant # move to the root folder of the application
 ```
 If you want to create separate virtual environment for python
-```bash
+```sh
      my_env/Script/activate
 ```
 Then install required libraries
-```bash
+```sh
      pip install -r requirements.txt
 ```
 
-Then for starting application first start the fastapi server i.e., websocket.py then run the app.py in separate Terminal or directly this cmd in bash script:
+Then for starting application first start the fastapi server i.e., websocket.py then run the app.py in separate Terminal or run directly this bash script:
 ```bash
      python websocket.py &
      python app.py
