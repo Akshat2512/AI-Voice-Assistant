@@ -78,21 +78,9 @@ Then install required libraries
      pip install -r requirements.txt
 ```
 
-Then for starting application first start the fastapi server i.e., websocket.py then run the app.py in separate Terminal or run directly this bash script:
+Then for starting application first start the fastapi server i.e., main_server.py then run the app.py in separate Terminal or You this run directly this bash script:
 ```sh
      python websocket.py &
      python app.py
 ```
-
-### Setup OpenAI API Key
-- On Windows:
-```sh
-  set OPENAI_API_KEY=your_openai_api_key
-```
-or
-
-
-- On macOS and Linux:
-```bash
-  export OPENAI_API_KEY=your_openai_api_key
-```
+and don't forget to add your api_key as environment variable.
