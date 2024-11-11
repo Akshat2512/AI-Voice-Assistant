@@ -1,0 +1,8 @@
+Eel                        ==  0.17.0
+fastapi                    ==  0.115.4
+fastapi-cli                ==  0.0.5
+numpy                      ==  1.26.1
+openai                     ==  1.54.3
+PyAudio                    ==  0.2.14
+tensorflow-cpu             ==  2.18.0
+uvicorn                    ==  0.32.0
