@@ -7,13 +7,14 @@ import time, wave
 import asyncio
 import json
 import os
+from dotenv import load_dotenv # Load environment variables from .env file 
+
+load_dotenv('.env.local')
 
 app = FastAPI()
 
 users_directory = {}    # maintain users database or their chat history in their 
 chat_history = ChatHistory()    # creates an instance of the ChatHistory class and each user will have their own instance of ChatHistory
-
-
 
 @app.websocket('/ws/{user_id}')     # will be responsible for handling real time or contiguous stream of audio chunks and then from here all AI response will be sent to specific client 
 async def chat(websocket: WebSocket, user_id: str):
