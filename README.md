@@ -70,7 +70,7 @@ If you have a repository for your project, clone it using git:
      cd AI_Voice_Assistant # move to the root folder of the application
 ```
 If you want to create separate virtual environment for python
-```shell
+```sh
      my_env/Script/activate
 ```
 Then install required libraries
@@ -79,14 +79,14 @@ Then install required libraries
 ```
 
 Then for starting application first start the fastapi server i.e., websocket.py then run the app.py in separate Terminal or run directly this bash script:
-```bash
+```sh
      python websocket.py &
      python app.py
 ```
 
 ### Setup OpenAI API Key
 - On Windows:
-```bash
+```sh
   set OPENAI_API_KEY=your_openai_api_key
 ```
 or
