@@ -1,4 +1,4 @@
-# PerceptVentures Assignment Overview
+# Persist Ventures Assignment Overview
 
 I successfully completed an assignment for PerceptVentures, where I developed a sophisticated AI chatbot application using Python Eel for the user interface. The chatbot leverages advanced AI models to provide a rich, interactive user experience.
 
