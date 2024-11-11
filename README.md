@@ -28,19 +28,19 @@ This is the user's login page. Here, you can login and create your new account a
 
 After opening app.py file, the main html page will directly be open. Here are the continued conversation between me and my chatbot.
 <p align="center">
-<img src="images/frontend1.png" alt="Image 1" style="height: 250px; width: 400px"><br>
+<img src="images/frontend1.png" alt="Image 1" style="height: 350px; width: 400px"><br>
 </p>
 <p align="center">
-<img src="images/frontend2.png" alt="Image 2" style="height: 250px; width: 400px"><br>
+<img src="images/frontend2.png" alt="Image 2" style="height: 350px; width: 400px"><br>
 </p>
  <p align="center">
-<img src="images/frontend3.png" alt="Image 3" style="height: 250px; width: 400px"><br>
+<img src="images/frontend3.png" alt="Image 3" style="height: 350px; width: 400px"><br>
 </p>
 <p align="center">
-<img src="images/frontend4.png" alt="Image 4" style="height: 250px; width: 400px"><br>
+<img src="images/frontend4.png" alt="Image 4" style="height: 350px; width: 400px"><br>
 </p>
 <p align="center">
-<img src="images/frontend5.png" alt="Image 5" style="height: 250px; width: 400px"><br>
+<img src="images/frontend5.png" alt="Image 5" style="height: 350px; width: 400px"><br>
 </p>
 
 ## Key Responsibilities and Achievements
