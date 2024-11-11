@@ -84,7 +84,7 @@ Then for starting application first start the fastapi server i.e., websocket.py 
      python app.py
 ```
 
-- ### Setup OpenAI API Key
+### Setup OpenAI API Key
 - On Windows:
 ```bash
   set OPENAI_API_KEY=your_openai_api_key
