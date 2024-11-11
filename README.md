@@ -79,6 +79,6 @@ Then for starting application first start the fastapi server i.e., main_server.p
      python app.py
 ```
 and don't forget to add your api_key as environment variable. You can also use .env file and python-dotenv library to load environment variable
-create .env file
+<br>create .env file
 ```
 OPENAI_API_KEY = your_api_key
