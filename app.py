@@ -25,9 +25,9 @@ async def handle_async_connect(user_id, signal):
         Queues[user_id]['signal'] = signal
     
 
-    await asyncio.gather(
-        process_audio_in_queue(Queues[user_id], eel)
-    )
+
+        asyncio.create_task(process_audio_in_queue(Queues[user_id], eel))
+    
     # task = asyncio.create_task()
     # await task
 
