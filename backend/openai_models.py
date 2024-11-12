@@ -3,12 +3,11 @@ from openai import OpenAI
 from pathlib import Path
 
 
-# Set your OpenAI API key
 class ChatHistory:
     def __init__(self):
         self.messages = [{
                             "role": "system",
-                            "content": "You are a helpful assistant and always exactly say \"Generating image ...\" when user ask to generate image" 
+                            "content": "You are a helpful assistant and always exactly say \"Generate image ...\" when user ask to generate image" 
                          }]
 
     def add_user_message(self, prompt):

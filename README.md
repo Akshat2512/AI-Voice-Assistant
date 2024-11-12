@@ -1,6 +1,6 @@
 # Persist Ventures Assignment Overview
 
-I successfully completed an assignment for PerceptVentures, where I developed a sophisticated AI chatbot application using Python Eel for the user interface. The chatbot leverages advanced AI models to provide a rich, interactive user experience.
+I successfully completed an assignment for Persist Ventures, where I developed a sophisticated AI chatbot application using Python Eel for the user interface. The chatbot leverages advanced AI models to provide a rich, interactive user experience.
 
 ## Technologies Used
 
@@ -73,12 +73,13 @@ Then install required libraries
      pip install -r requirements.txt
 ```
 
-Then for starting application first start the fastapi server i.e., main_server.py then run the app.py in separate Terminal or You this run directly this bash script:
+Then for starting application first start the fastapi server i.e., main_server.py then run the application app.py in separate Terminal or run directly using this bash script:
 ```sh
      python websocket.py &
      python app.py
 ```
-and don't forget to add your api_key as environment variable. You can also use .env file and python-dotenv library to load environment variable
+and don't forget to add your api_key as environment variable. You can also create .env file in root directory of your project and to access this environment variable use python-dotenv library to load environment variable
 <br>create .env file
 ```
 OPENAI_API_KEY = your_api_key
+```

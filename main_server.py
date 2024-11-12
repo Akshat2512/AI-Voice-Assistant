@@ -9,14 +9,14 @@ import json
 import os
 from dotenv import load_dotenv # Load environment variables from .env file 
 
-load_dotenv('.env.local')
+load_dotenv()
 
 app = FastAPI()
 
 users_directory = {}    # maintain users database or their chat history in their 
 chat_history = ChatHistory()    # creates an instance of the ChatHistory class and each user will have their own instance of ChatHistory
 
-@app.websocket('/ws/{user_id}')     # will be responsible for handling real time or contiguous stream of audio chunks and then from here all AI response will be sent to specific client 
+@app.websocket('/ws/{user_id}')     # will be responsible for handling real time stream of audio chunks and all AI response will be sent the streamer client 
 async def chat(websocket: WebSocket, user_id: str):
 
     if user_id not in users_directory: 
@@ -60,7 +60,7 @@ async def chat(websocket: WebSocket, user_id: str):
                                                 
                     result = generate_response(prompt, os.getenv('OPENAI_API_KEY'), chat_history)
                  
-                    if "Generating image ..." in result:
+                    if "Generate image ..." in result:
                     
                         image = generate_image_response(prompt, os.getenv('OPENAI_API_KEY'))
                         print(image)
@@ -91,8 +91,8 @@ async def chat(websocket: WebSocket, user_id: str):
             # print(f"Connection error: {e}")
             await websocket.send_text('connection_closed')
 
-async def handle_audio_new(websocket: WebSocket):    # receives the audio stream from clients
-    audio_data = await websocket.receive_bytes()
+async def handle_audio_new(websocket: WebSocket):    #returns the recieved bytes
+    audio_data = await websocket.receive_bytes()   # receives the audio stream from clients
     return audio_data
 
 async def save_audio_to_file(audio_data, file_path):    # save audio to the folder temporary, it is not user specific yet.

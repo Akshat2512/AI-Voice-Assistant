@@ -22,11 +22,11 @@ function receiveResponses(message)
      {      
              response.innerHTML = response.innerHTML + `<div class="user"><div>${message.text}</div></div><div class="assistant"><div><i class="fa-solid fa-spinner fa-spin"></i></div></div>`;
      }
-     else if(message.responseType == 'assistant' && message.text == 'Generating image ...')
+     else if(message.responseType == 'assistant' && message.text == 'Generate image ...')
      {   
          
          e[e.length-1].innerHTML = `<div></div><div class = 'image_process'><img src="${message.image_url}" alt="Not found"></div><div class="revised-prompt">${message.revised_prompt}</div>`;
-         e[e.length-1].querySelector('div').innerText = `${message.text}`;
+         e[e.length-1].querySelector('div').innerText = `${'Generating image ...'}`;
          // response.innerHTML = response.innerHTML + `<div class="assistant"></div>`;
      }
     
