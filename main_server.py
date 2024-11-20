@@ -1,8 +1,5 @@
-from fastapi import WebSocket, FastAPI, Request
+from fastapi import WebSocket, FastAPI
 
-from fastapi.templating import Jinja2Templates 
-from fastapi.staticfiles import StaticFiles 
-from fastapi.responses import HTMLResponse
 
 import uvicorn
 
@@ -22,12 +19,6 @@ app = FastAPI()
 
 users_directory = {}    # maintain users database or their chat history in their where each key represents the user_id
 
-app.mount("/static", StaticFiles(directory="static"), name="static") 
-templates = Jinja2Templates(directory="templates")
-
-@app.get("/", response_class=HTMLResponse) 
-async def get(request: Request): 
-    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.websocket('/ws/{user_id}')     # will be responsible for handling real time stream of audio chunks and all AI generated responses will be sent to the streamer client 
 async def chat(websocket: WebSocket, user_id: str):
