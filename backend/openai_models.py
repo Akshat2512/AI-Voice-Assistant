@@ -7,7 +7,7 @@ class ChatHistory:
     def __init__(self):
         self.messages = [{
                             "role": "system",
-                            "content": "You are a helpful assistant and always reply with these keywords when user have asked you to generate an image \"CALL DALL-E\"" 
+                            "content": "You are a helpful assistant and always reply only with these keywords when user have asked you to generate an image \"CALL DALL-E\"" 
                          }]
 
     def add_user_message(self, prompt):

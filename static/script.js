@@ -30,6 +30,7 @@ function connect_ws(user_id){
     
     socket.onmessage = function(event) { 
         console.log('Message from server:', event.data);
+        receiveResponses(event.data)
         // const messagesDiv = document.getElementById('messages');
         // messagesDiv.innerHTML += `<p>${event.data}</p>`; 
     };
