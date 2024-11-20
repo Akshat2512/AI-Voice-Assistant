@@ -7,7 +7,7 @@ class ChatHistory:
     def __init__(self):
         self.messages = [{
                             "role": "system",
-                            "content": "You are a helpful assistant and always exactly say \"Generate image ...\" when user ask to generate image" 
+                            "content": "You are a helpful assistant and always reply with these keywords when user have asked you to generate an image \"CALL DALL-E\"" 
                          }]
 
     def add_user_message(self, prompt):
@@ -22,7 +22,7 @@ class ChatHistory:
             "content": prompt
         })
 
-def transcribe_audio(audio_file_path, API_KEY):  # Transcribe audio file using OpenAI's Whisper model
+def transcribe_audio(audio_file_path, API_KEY):  # Transcribe audio file using OpenAI's Whisper-1 model
 
     client = OpenAI(api_key=API_KEY)
     
@@ -49,9 +49,6 @@ def transcribe_audio(audio_file_path, API_KEY):  # Transcribe audio file using O
         # Clean up the temporary file 
         if os.path.exists(audio_file_path): 
             os.remove(audio_file_path)
-
-
-
 
 
 def generate_response(prompt, API_KEY, chat_history):  # Generate response from user's text using OpenAI's GPT-4o model 

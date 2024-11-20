@@ -2,7 +2,7 @@ const startMic = document.getElementById('start-mic');
 const responseContainer = document.getElementById('recorder-container');
 const titleContainer = document.getElementById('title-container');
 const container2 = document.getElementById('container-2');
-const status = document.getElementById('status');
+const stat = document.getElementById('status');
 const response = document.querySelector('.response');
 
 const uname = document.querySelector('#uname');
@@ -22,12 +22,18 @@ function receiveResponses(message)
      {      
              response.innerHTML = response.innerHTML + `<div class="user"><div>${message.text}</div></div><div class="assistant"><div><i class="fa-solid fa-spinner fa-spin"></i></div></div>`;
      }
-     else if(message.responseType == 'assistant' && message.text == 'Generate image ...')
+     else if(message.responseType == 'assistant' && message.text == 'CALL DALL-E')
      {   
-         
-         e[e.length-1].innerHTML = `<div></div><div class = 'image_process'><img src="${message.image_url}" alt="Not found"></div><div class="revised-prompt">${message.revised_prompt}</div>`;
-         e[e.length-1].querySelector('div').innerText = `${'Generating image ...'}`;
+       
+         e[e.length-1].innerHTML = `<div></div><div class = 'image_process'><div><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="revised-prompt"></div>`;
+         e[e.length-1].querySelector('div').innerText = 'Generating image ...';
+
          // response.innerHTML = response.innerHTML + `<div class="assistant"></div>`;
+     }
+     else if('image_url' in message)
+     {
+         e[e.length-1].querySelector('.image_process').innerHTML = `<img src="${message.image_url}" alt="Not found">`;
+         e[e.length-1].querySelector('.revised-prompt').innerText =  message.revised_prompt
      }
     
      else if(message.responseType == 'assistant')
@@ -35,7 +41,8 @@ function receiveResponses(message)
         e[e.length-1].querySelector('div').innerText = `${message.text}`;
      }
      else
-         e[e.length-1].innerText =`<div>${message}</div>`;
+        
+         e[e.length-1].innerHTML =`<div>Content Policy Violation</div>`;
          
      console.table(message)
      scrollToBottom()
@@ -76,4 +83,7 @@ startMic.onclick = async function() {
 
 };
 
+stat.onclick = async ()=>{
+     startMic.click();
+}
 
