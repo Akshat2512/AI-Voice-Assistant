@@ -99,16 +99,16 @@ async def generate_ai_response(response_queue, websocket, user_id, chat_history)
                     print('Transcribing: ', prompt)
 
                     message = {"responseType" : "user", "text" : prompt[:-1]}
-                    message = json.dumps(message)
-                    await websocket.send_text(message)
+                    # message = json.dumps(message)
+                    await websocket.send_json(message)
                     
                     response = generate_response(prompt, os.getenv('OPENAI_API_KEY'), chat_history)  # generate natural language using gpt-4o model  
                     await asyncio.sleep(0.1)
                     
                     if "CALL DALL-E" == response:
                         message = {"responseType" : "assistant", "text": response}
-                        message = json.dumps(message)
-                        await websocket.send_text(message)
+                        # message = json.dumps(message)
+                        await websocket.send_json(message)
                         await asyncio.sleep(0.1)
 
                         print('Generating Image ...')
@@ -118,15 +118,15 @@ async def generate_ai_response(response_queue, websocket, user_id, chat_history)
                         try:
                             message = {"responseType" : "assistant", "revised_prompt":image.revised_prompt, "image_url": image.url}
                         except Exception as e:
-                            await websocket.send_text('{"status": "error"}')
+                            await websocket.send_json('{"status": "error"}')
 
-                        message = json.dumps(message)
-                        await websocket.send_text(message)
+                        # message = json.dumps(message)
+                        await websocket.send_json(message)
                         # print(message)
                     else:
                         message = {"responseType" : "assistant", "text" : response}
-                        message = json.dumps(message)
-                        await websocket.send_text(message)
+                        # message = json.dumps(message)
+                        await websocket.send_json(message)
 
                     print('GPT-4o AI: ', response, "\n")
 
