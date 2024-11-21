@@ -34,18 +34,18 @@ interpreter.allocate_tensors()
 async def process_audio_stream(audio_queue, response_queue):
     audio_buffer = np.zeros(TARGET_LENGTH, dtype=np.float32)
     audio_chunks = []
-    try:
+    audio_data = b''
        
         # Open the audio stream
         
         # print("Listening... Press Ctrl+C to stop.")
 
-        speak = 0
-        silence = 0
+    speak = 0
+    silence = 0
         # Continuously read from the stream and append to audio_data
   
-        while True:
-           
+    while True:
+          try: 
             audio_data = await audio_queue.get()
             
             audio_chunk = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
@@ -65,7 +65,7 @@ async def process_audio_stream(audio_queue, response_queue):
             prediction = labels[top_class_index]
             # await response_queue.put(prediction)
             # print(response_queue.qsize())
-            # print(prediction)
+            print(prediction)
             
             if( prediction == 'Speech'):
                 audio_chunks.append(audio_data)
@@ -89,7 +89,7 @@ async def process_audio_stream(audio_queue, response_queue):
                 silence = 0
                 speak = 0
 
-    except Exception as e:
-
-        print(e)
+          except Exception as e:
+                print(audio_data)
+                print(e)
 

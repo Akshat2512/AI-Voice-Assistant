@@ -38,40 +38,41 @@ async def chat(websocket: WebSocket, user_id: str):
     chat_history = users_directory[user_id]
     
     await websocket.accept()
-    await websocket.send_text('{"status": "started"}')
-    # audio_queue = asyncio.Queue(maxsize=10)
-    # response_queue = asyncio.Queue()
+ 
+    audio_queue = asyncio.Queue(maxsize=10)
+    response_queue = asyncio.Queue()
 
 
-    # process_task = asyncio.create_task(process_audio_stream(audio_queue, response_queue))   # It will create asynchrounous task to handle audio_queue in the background, detect speeches in the audio_queue using pre trained Model and add it to response_queue
+    process_task = asyncio.create_task(process_audio_stream(audio_queue, response_queue))   # It will create asynchrounous task to handle audio_queue in the background, detect speeches in the audio_queue using pre trained Model and add it to response_queue
    
-    # while True:
+    while True:
    
-    #     try:
-    #         result = await handle_audio_new(websocket)
-
-    #         await audio_queue.put(result)
-    #         print(audio_queue.qsize())
+        try:
+            result = await handle_audio_new(websocket)
             
-    #         asyncio.create_task(generate_ai_response(response_queue, websocket, user_id, chat_history))   #  for generating ai responses and send it back to the client
-    #         # await asyncio.sleep(0.1)
+            await audio_queue.put(result)
+            print(audio_queue.qsize())
             
-    #         if not websocket.application_state.CONNECTED:
-    #             break
+            asyncio.create_task(generate_ai_response(response_queue, websocket, user_id, chat_history))   #  for generating ai responses and send it back to the client
+            # await asyncio.sleep(0.1)
+            
+            if not websocket.application_state.CONNECTED:
+                break
 
-    #         # await websocket.send_text(result)
+            # await websocket.send_text(result)
          
-    #     except Exception as e:
+        except Exception as e:
           
-    #         # print(f"Connection error: {e}")
-    #         await websocket.send_text('connection_closed')
-    #         await websocket.close()
+            # print(f"Connection error: {e}")
+            await websocket.send_text('connection_closed')
+            await websocket.close()
         
    
 
 async def handle_audio_new(websocket: WebSocket):  
     try:
         audio_data = await websocket.receive_bytes()   # receives the audio stream from clients
+        # print(audio_data)
         return audio_data
     except Exception as e:
         print("Websocket gets Disconnected")

@@ -11,11 +11,72 @@ const uname = document.querySelector('#uname');
 setTimeout(() => responseContainer.style.opacity = '1', 1000);
 
 
+let recorder;
+let audioStream;
+let audioQueue = [];
 
-function connect_ws(user_id){
+async function start_recording() {
+            startMic.disabled = true;
+            container2.querySelectorAll("h2")[1].innerText = "Listening ...";
+            document.getElementById('status').disabled = false;
+
+            // Get access to the microphone
+            try {
+            audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            console.log('Microphone access is granted')
+            // Initialize the recorder
+            recorder = RecordRTC(audioStream, {
+                type: 'audio',
+                mimeType: 'audio/webm',
+                bufferSize: 1024,
+                sampleRate: 16000,
+                timeSlice: 100,
+                ondataavailable: function(Blob) {
+                    // Convert Blob to binary string and push to queue
+                    audioQueue.unshift(Blob);
+                    // console.log(Blob)
+                    // let reader = new FileReader();
+                    // reader.readAsArrayBuffer(audioBlob);
+                    // reader.onloadend = function() {
+                    //     let binaryString = reader.result;
+                    //     audioQueue.push(binaryString);
+                    //     logAudioChunk(binaryString);
+                    // };
+                }
+            });
+
+            // Start recording
+            recorder.startRecording();
+        }
+        catch (err){
+            console.log('Microphone access is denied')
+        }
+
+        };
+
+function stopRecording(){
+    recorder.stopRecording(function() {
+        // Release microphone
+        container2.querySelectorAll("h2")[1].innerText = "Listening ...";
+        stat.innerHTML = '<i class="fa-regular fa-circle-pause"></i>';
+        audioStream.getTracks().forEach(track => track.stop());
+    });
+}
+
+   
+        function logAudioChunk(binaryString) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += `<p>Audio chunk received. Length: ${binaryString.byteLength}</p>`;
+        }
+
+
+
+async function connect_ws(user_id){
+
+    return new Promise((resolve, reject) => {
     const socket = new WebSocket('ws://localhost:5001/ws/'+user_id);
     socket.onopen = function(event) { 
-        console.log('WebSocket is connected.');
+        resolve(socket)
      }; 
     
     // Connection closed event 
@@ -26,6 +87,7 @@ function connect_ws(user_id){
     // Error event 
     socket.onerror = function(error) { 
         console.error('WebSocket error:', error); 
+        reject(error)
     };
     
     socket.onmessage = function(event) { 
@@ -34,10 +96,33 @@ function connect_ws(user_id){
         // const messagesDiv = document.getElementById('messages');
         // messagesDiv.innerHTML += `<p>${event.data}</p>`; 
     };
+    
+   });
 
 }
 
-connect_ws('Akshat');
+async function start_connection(){
+    try { 
+        const socket = await connect_ws('your_user_id'); 
+        console.log('WebSocket connected successfully.'); // Example of sending a message through WebSocket 
+        
+        setInterval(()=>{
+            if(audioQueue.length !=0)
+              socket.send(audioQueue.pop()); 
+            else{
+             console.log('audioQueue is empty!')
+            }
+        },100)
+        
+        }
+       
+     
+    catch (error) { 
+        console.error('Error during WebSocket connection:', error); 
+    }
+}
+
+
 
 function scrollToBottom() { 
     response.scrollTo({ top: response.scrollHeight, behavior: 'smooth' }); 
@@ -80,14 +165,15 @@ function receiveResponses(message)
 
 
 
-//3)
 startMic.onclick = async function() {
-
+    
     titleContainer.style.opacity = '0';
     response.style.opacity = '1';
- //    status.style.border = '1px solid black'
+
     container2.style.opacity= '1';
-   
+    container2.querySelectorAll("h2")[1].innerText = "Listening ...";
+    stat.innerHTML = `<i class="fa-sharp fa-solid fa-circle-notch fa-spin"></i>`;
+
     responseContainer.style.cssText = `
                                width: 90vw;
                                height: 80vh;
@@ -96,17 +182,21 @@ startMic.onclick = async function() {
  
     
  
-    setTimeout(()=>{
+    setTimeout(async ()=>{
         titleContainer.style.display = 'none';
         container2.style.gap = '40px';
         container2.querySelectorAll("h2").forEach(e=>{
          e.style.opacity = '1';
         })
+
+      start_recording();
+      start_connection();
+
     }, 2000)
 
 };
 
 stat.onclick = async ()=>{
-     startMic.click();
+     stopRecording();
 }
 
