@@ -25,23 +25,25 @@ async function start_recording() {
             audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
             console.log('Microphone access is granted')
             // Initialize the recorder
-            recorder = RecordRTC(audioStream, {
+            recorder = new RecordRTC(audioStream, {
                 type: 'audio',
-                mimeType: 'audio/webm',
+                recorderType: RecordRTC.StereoAudioRecorder,
+                mimeType: "audio/wav",
+                numberOfAudioChannels: 1,
                 bufferSize: 1024,
                 sampleRate: 16000,
-                timeSlice: 100,
+                timeSlice: 1,
                 ondataavailable: function(Blob) {
                     // Convert Blob to binary string and push to queue
-                    audioQueue.unshift(Blob);
+                    // audioQueue.unshift(Blob);
                     // console.log(Blob)
-                    // let reader = new FileReader();
-                    // reader.readAsArrayBuffer(audioBlob);
-                    // reader.onloadend = function() {
-                    //     let binaryString = reader.result;
-                    //     audioQueue.push(binaryString);
-                    //     logAudioChunk(binaryString);
-                    // };
+                    let reader = new FileReader();
+                    reader.readAsArrayBuffer(Blob);
+                    reader.onloadend = function() {
+                        let binaryString = reader.result;
+                        audioQueue.unshift(binaryString);
+                        logAudioChunk(binaryString);
+                    };
                 }
             });
 
@@ -66,7 +68,7 @@ function stopRecording(){
    
         function logAudioChunk(binaryString) {
             const logDiv = document.getElementById('log');
-            logDiv.innerHTML += `<p>Audio chunk received. Length: ${binaryString.byteLength}</p>`;
+            console.log(`Audio chunk received Length: ${binaryString.byteLength}`);
         }
 
 

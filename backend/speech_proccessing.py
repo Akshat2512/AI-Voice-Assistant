@@ -65,7 +65,7 @@ async def process_audio_stream(audio_queue, response_queue):
             prediction = labels[top_class_index]
             # await response_queue.put(prediction)
             # print(response_queue.qsize())
-            print(prediction)
+            print(prediction, len(audio_data) )
             
             if( prediction == 'Speech'):
                 audio_chunks.append(audio_data)
@@ -90,6 +90,7 @@ async def process_audio_stream(audio_queue, response_queue):
                 speak = 0
 
           except Exception as e:
-                print(audio_data)
+                # print(audio_data)
+                print(len(audio_data))
                 print(e)
 
