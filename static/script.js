@@ -25,7 +25,7 @@ async function start_recording() {
             navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } })
             .then(stream => {
                 const mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.start(5000);
+                mediaRecorder.start(10000);
 
                 mediaRecorder.addEventListener("dataavailable", event => {
                     const audioBlob = new Blob([event.data], {type: 'audio/wav'});
@@ -34,15 +34,16 @@ async function start_recording() {
                     reader.readAsArrayBuffer(audioBlob); 
                     reader.onloadend = function() { 
                            console.log(audioBlob.size)
+                           playAudio(audioBlob)
                            const arrayBuffer = reader.result;
                            const uint8Array = new Uint8Array(arrayBuffer); 
                                     // Add data to intermediate buffer 
                            intermediateBuffer = intermediateBuffer.concat(Array.from(uint8Array));
                                 // Convert Blob to binary string and push to queue
                                 console.log(intermediateBuffer.length)
-                                while (intermediateBuffer.length >= 2048) { 
-                                    const chunk = new Uint8Array(intermediateBuffer.slice(0, 2048)); 
-                                    intermediateBuffer = intermediateBuffer.slice(2048);
+                                while (intermediateBuffer.length >= 1024) { 
+                                    const chunk = new Uint8Array(intermediateBuffer.slice(0, 1024)); 
+                                    intermediateBuffer = intermediateBuffer.slice(1024);
                                          //  sendChunkToServer(chunk.buffer);
                                     audioQueue.unshift(chunk.buffer);
                                 }
@@ -124,6 +125,18 @@ function stopRecording(){
 
 }
 
+function playAudio(audioBlob) { 
+    if (audioBlob) { 
+        const audioURL = URL.createObjectURL(audioBlob); 
+        window.open(audioURL, '_blank');
+        // const audioPlayer = document.getElementById('audioPlayer'); 
+        // audioPlayer.src = audioURL;
+        // audioPlayer.play(); 
+        } 
+    else { 
+        console.log('No audio blob available to play'); 
+    } 
+}
    
     function logAudioChunk(binaryString) {
             // const logDiv = document.getElementById('log');
