@@ -22,7 +22,7 @@ async function start_recording() {
             document.getElementById('status').disabled = false;
 
 
-            navigator.mediaDevices.getUserMedia({ audio: true })
+            navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } })
             .then(stream => {
                 const mediaRecorder = new MediaRecorder(stream);
                 mediaRecorder.start(5000);
