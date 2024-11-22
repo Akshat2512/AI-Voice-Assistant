@@ -22,49 +22,91 @@ async function start_recording() {
             document.getElementById('status').disabled = false;
 
 
-            navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1 } })
-            .then(stream => {
-                const mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.start(10000);
+        let audioContext;
+        let mediaStreamSource;
+        let scriptProcessor;
+        let mediaStream;
 
-                mediaRecorder.addEventListener("dataavailable", event => {
-                    const audioBlob = new Blob([event.data], {type: 'audio/wav'});
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaStream = stream;
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    mediaStreamSource = audioContext.createMediaStreamSource(stream);
+                    scriptProcessor = audioContext.createScriptProcessor(2048, 1, 1); // Buffer size of 2048
 
-                    const reader = new FileReader(); 
-                    reader.readAsArrayBuffer(audioBlob); 
-                    reader.onloadend = function() { 
-                           console.log(audioBlob.size)
-                           playAudio(audioBlob)
-                           const arrayBuffer = reader.result;
-                           const uint8Array = new Uint8Array(arrayBuffer); 
-                                    // Add data to intermediate buffer 
-                           intermediateBuffer = intermediateBuffer.concat(Array.from(uint8Array));
-                                // Convert Blob to binary string and push to queue
-                                console.log(intermediateBuffer.length)
-                                while (intermediateBuffer.length >= 1024) { 
-                                    const chunk = new Uint8Array(intermediateBuffer.slice(0, 1024)); 
-                                    intermediateBuffer = intermediateBuffer.slice(1024);
-                                         //  sendChunkToServer(chunk.buffer);
-                                    audioQueue.unshift(chunk.buffer);
-                                }
+                    scriptProcessor.onaudioprocess = function(event) {
+                        const inputBuffer = event.inputBuffer.getChannelData(0);
+                        const binaryString = bufferToBinaryString(inputBuffer);
+                         
+                        audioQueue.unshift(binaryString);
+                        
+                    };
+
+                    mediaStreamSource.connect(scriptProcessor);
+                    scriptProcessor.connect(audioContext.destination);
+
+                    console.log("Recording started");
+                })
+                .catch(error => {
+                    console.error("Error accessing the microphone: ", error);
+                });
+        }
+
+      
+
+        function bufferToBinaryString(buffer) {
+            let binaryString = '';
+            const bytes = new Uint8Array(buffer.buffer);
+            for (let i = 0; i < bytes.length; i++) {
+                binaryString += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binaryString); // Convert to base64 to ensure compatibility
+        }
+
+
+            // navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000,  sampleSize: 16, volume: 1, channelCount: 1, echoCancellation: true, noiseSuppression: true } })
+            // .then(stream => {
+            //     const mediaRecorder = new MediaRecorder(stream);
+            //     mediaRecorder.start(10000);
+
+            //     mediaRecorder.addEventListener("dataavailable", event => {
+            //         const audioBlob = new Blob([event.data], {type: 'audio/wav'});
+            //         playAudio(audioBlob)
+            //         const reader = new FileReader(); 
+            //         reader.readAsArrayBuffer(audioBlob); 
+            //         reader.onloadend = function() { 
+            //                console.log(audioBlob.size)
                            
-                    // audioQueue.upshift(Blob);
-                    // let reader = new FileReader();
-                    //             reader.readAsArrayBuffer(audioBlob);
-                    //             reader.onloadend = function() {
-                    //                 let binaryString = reader.result;
-                    //                 audioQueue.unshift(binaryString);
-                    //                 logAudioChunk(binaryString);
-                    //             };
+            //                const arrayBuffer = reader.result;
+            //                const uint8Array = new Uint8Array(arrayBuffer); 
+            //                         // Add data to intermediate buffer 
+            //                intermediateBuffer = intermediateBuffer.concat(Array.from(uint8Array));
+            //                     // Convert Blob to binary string and push to queue
+            //                     console.log(intermediateBuffer.length)
+            //                     while (intermediateBuffer.length >= 2048) { 
+            //                         const chunk = new Uint8Array(intermediateBuffer.slice(0, 2048)); 
+            //                         intermediateBuffer = intermediateBuffer.slice(2048);
+            //                              //  sendChunkToServer(chunk.buffer);
+            //                         audioQueue.unshift(chunk.buffer);
+            //                     }
+                           
+            //         // audioQueue.upshift(Blob);
+            //         // let reader = new FileReader();
+            //         //             reader.readAsArrayBuffer(audioBlob);
+            //         //             reader.onloadend = function() {
+            //         //                 let binaryString = reader.result;
+            //         //                 audioQueue.unshift(binaryString);
+            //         //                 logAudioChunk(binaryString);
+            //         //             };
                   
-                }});
-            });
+            //     }});
+            // });
 
 
 
-            // Get access to the microphone
+        //     // Get access to the microphone
         //     try {
-        //     audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        //     audioStream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000,  sampleSize: 16, volume: 1, channelCount: 1, echoCancellation: true, noiseSuppression: true }});
         //     console.log('Microphone access is granted')
         //     // Initialize the recorder
         //     recorder = new RecordRTC(audioStream, {
@@ -109,7 +151,7 @@ async function start_recording() {
         //     console.log('Microphone access is denied')
         // }
 
-        };
+      
 
 function stopRecording(){
     recorder.stopRecording(function() {
@@ -128,7 +170,7 @@ function stopRecording(){
 function playAudio(audioBlob) { 
     if (audioBlob) { 
         const audioURL = URL.createObjectURL(audioBlob); 
-        window.open(audioURL, '_blank');
+        window.open(audioURL, '_blank', 'width=600,height=400,top=100,left=100');
         // const audioPlayer = document.getElementById('audioPlayer'); 
         // audioPlayer.src = audioURL;
         // audioPlayer.play(); 
