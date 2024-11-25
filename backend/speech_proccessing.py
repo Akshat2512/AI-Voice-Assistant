@@ -1,10 +1,10 @@
 
 # import wave
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
 import zipfile
 import time
-# import tflite_runtime.interpreter as tflite
+import tflite_runtime.interpreter as tflite
 # from tflite_runtime.interpreter import Interpreter
 
 TARGET_LENGTH = 15600
