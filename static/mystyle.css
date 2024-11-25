@@ -65,7 +65,7 @@ body {
 }
 
 
-#status{
+#stream{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -75,8 +75,23 @@ body {
     background: #0288d1;
     transform: scale(2) translate(0,9px);
     border-radius: 20px;
+    font-size: 18px;
 }
 
+#status{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color:rgb(58, 86, 110);
+    height:18px;
+    padding: 5px;
+    background: #7c7c7c;
+    border-radius: 20px;
+    font-size: 18px;
+}
 button {
     padding: 10px 20px;
     margin-top: 10px;
@@ -87,10 +102,6 @@ button {
     cursor: pointer;
     transition: ease-in-out 0.7s;
     font-size: 20px;
-}
-#status {
-    /* margin-top: 20px; */
-    font-size: 18px;
 }
 
 .response{

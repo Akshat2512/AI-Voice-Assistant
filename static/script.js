@@ -2,7 +2,7 @@ const startMic = document.getElementById('start-mic');
 const responseContainer = document.getElementById('recorder-container');
 const titleContainer = document.getElementById('title-container');
 const container2 = document.getElementById('container-2');
-const stat = document.getElementById('status');
+const strm = document.getElementById('stream');
 const response = document.querySelector('.response');
 
 const uname = document.querySelector('#uname');
@@ -13,184 +13,74 @@ setTimeout(() => responseContainer.style.opacity = '1', 1000);
 
 let recorder;
 let audioStream;
+let mediaRecorder;
 let audioQueue = [];
 let intermediateBuffer = [];
+let interval;
 
 async function start_recording() {
+           
             startMic.disabled = true;
             container2.querySelectorAll("h2")[1].innerText = "Listening ...";
             document.getElementById('status').disabled = false;
 
+            // Get access to the microphone
+            try {
+            audioStream = await navigator.mediaDevices.getUserMedia({ audio: true});
+            console.log('Microphone access is granted')
 
-        let audioContext;
-        let mediaStreamSource;
-        let scriptProcessor;
-        let mediaStream;
-
-            navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
-                    mediaStream = stream;
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    mediaStreamSource = audioContext.createMediaStreamSource(stream);
-                    scriptProcessor = audioContext.createScriptProcessor(2048, 1, 1); // Buffer size of 2048
-
-                    scriptProcessor.onaudioprocess = function(event) {
-                        const inputBuffer = event.inputBuffer.getChannelData(0);
-                        const binaryString = bufferToBinaryString(inputBuffer);
-                         
-                        audioQueue.unshift(binaryString);
+            
+            // Initialize the recorder
+            recorder = new RecordRTC(audioStream, {
+                type: 'audio',
+                recorderType: RecordRTC.StereoAudioRecorder,
+                mimeType: "audio/wav",
+                numberOfAudioChannels: 1,
+                desiredSampRate: 16000,
+                bufferSize: 1024,
+                timeSlice: 100,
+                ondataavailable: function(Blob) {
+                    const reader = new FileReader();
+                    reader.onloadend = async function() { 
+                        const audio_bytes = reader.result;
+                        audioQueue.unshift(audio_bytes)
                         
-                    };
+                        };
+                    reader.readAsArrayBuffer(Blob);
+                    
+                }
+            });
 
-                    mediaStreamSource.connect(scriptProcessor);
-                    scriptProcessor.connect(audioContext.destination);
-
-                    console.log("Recording started");
-                })
-                .catch(error => {
-                    console.error("Error accessing the microphone: ", error);
-                });
+            // Start recording
+            recorder.startRecording();
         }
-
-      
-
-        function bufferToBinaryString(buffer) {
-            let binaryString = '';
-            const bytes = new Uint8Array(buffer.buffer);
-            for (let i = 0; i < bytes.length; i++) {
-                binaryString += String.fromCharCode(bytes[i]);
-            }
-            return btoa(binaryString); // Convert to base64 to ensure compatibility
+        catch (err){
+            console.log('Microphone access is denied')
         }
-
-
-            // navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000,  sampleSize: 16, volume: 1, channelCount: 1, echoCancellation: true, noiseSuppression: true } })
-            // .then(stream => {
-            //     const mediaRecorder = new MediaRecorder(stream);
-            //     mediaRecorder.start(10000);
-
-            //     mediaRecorder.addEventListener("dataavailable", event => {
-            //         const audioBlob = new Blob([event.data], {type: 'audio/wav'});
-            //         playAudio(audioBlob)
-            //         const reader = new FileReader(); 
-            //         reader.readAsArrayBuffer(audioBlob); 
-            //         reader.onloadend = function() { 
-            //                console.log(audioBlob.size)
-                           
-            //                const arrayBuffer = reader.result;
-            //                const uint8Array = new Uint8Array(arrayBuffer); 
-            //                         // Add data to intermediate buffer 
-            //                intermediateBuffer = intermediateBuffer.concat(Array.from(uint8Array));
-            //                     // Convert Blob to binary string and push to queue
-            //                     console.log(intermediateBuffer.length)
-            //                     while (intermediateBuffer.length >= 2048) { 
-            //                         const chunk = new Uint8Array(intermediateBuffer.slice(0, 2048)); 
-            //                         intermediateBuffer = intermediateBuffer.slice(2048);
-            //                              //  sendChunkToServer(chunk.buffer);
-            //                         audioQueue.unshift(chunk.buffer);
-            //                     }
-                           
-            //         // audioQueue.upshift(Blob);
-            //         // let reader = new FileReader();
-            //         //             reader.readAsArrayBuffer(audioBlob);
-            //         //             reader.onloadend = function() {
-            //         //                 let binaryString = reader.result;
-            //         //                 audioQueue.unshift(binaryString);
-            //         //                 logAudioChunk(binaryString);
-            //         //             };
-                  
-            //     }});
-            // });
-
-
-
-        //     // Get access to the microphone
-        //     try {
-        //     audioStream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000,  sampleSize: 16, volume: 1, channelCount: 1, echoCancellation: true, noiseSuppression: true }});
-        //     console.log('Microphone access is granted')
-        //     // Initialize the recorder
-        //     recorder = new RecordRTC(audioStream, {
-        //         type: 'audio',
-        //         recorderType: RecordRTC.StereoAudioRecorder,
-        //         mimeType: "audio/wav",
-        //         numberOfAudioChannels: 1,
-        //         // bufferSize: 512,
-        //         sampleRate: 44100,
-        //         timeSlice: 10,
-        //         ondataavailable: function(Blob) {
-
-        //             const reader = new FileReader(); 
-        //             reader.readAsArrayBuffer(Blob); 
-        //             reader.onloadend = function() { 
-        //                 const arrayBuffer = reader.result;
-        //                 const uint8Array = new Uint8Array(arrayBuffer); 
-        //                 // Add data to intermediate buffer 
-        //                 intermediateBuffer = intermediateBuffer.concat(Array.from(uint8Array));
-        //             // Convert Blob to binary string and push to queue
-        //             while (intermediateBuffer.length >= 2048) { 
-        //                 const chunk = new Uint8Array(intermediateBuffer.slice(0, 2048)); 
-        //                 intermediateBuffer = intermediateBuffer.slice(2048);
-        //                 //  sendChunkToServer(chunk.buffer);
-        //                  audioQueue.unshift(chunk.buffer);
-        //                  }
-        //             // console.log(Blob)
-        //             // let reader = new FileReader();
-        //             // reader.readAsArrayBuffer(Blob);
-        //             // reader.onloadend = function() {
-        //             //     let binaryString = reader.result;
-        //             //     audioQueue.unshift(binaryString);
-        //             //     logAudioChunk(binaryString);
-        //             // };
-        //         }
-        //     }});
-
-        //     // Start recording
-        //     recorder.startRecording();
-        // }
-        // catch (err){
-        //     console.log('Microphone access is denied')
-        // }
-
+    }
       
 
 function stopRecording(){
     recorder.stopRecording(function() {
         // Release microphone
         container2.querySelectorAll("h2")[1].innerText = " ... ";
-        stat.innerHTML = '<i class="fa-regular fa-circle-pause"></i>';
+        strm.innerHTML = '<i class="fa-regular fa-circle-pause"></i>';
         audioStream.getTracks().forEach(track => track.stop());
+        clearInterval(interval)
     });
-    stat.onclick = async ()=>{
+    strm.onclick = async ()=>{
         startMic.onclick();
     }
     
 
 }
 
-function playAudio(audioBlob) { 
-    if (audioBlob) { 
-        const audioURL = URL.createObjectURL(audioBlob); 
-        window.open(audioURL, '_blank', 'width=600,height=400,top=100,left=100');
-        // const audioPlayer = document.getElementById('audioPlayer'); 
-        // audioPlayer.src = audioURL;
-        // audioPlayer.play(); 
-        } 
-    else { 
-        console.log('No audio blob available to play'); 
-    } 
-}
-   
-    function logAudioChunk(binaryString) {
-            // const logDiv = document.getElementById('log');
-            console.log(`Audio chunk received Length: ${binaryString.byteLength}`);
-        }
-
 
 
 async function connect_ws(user_id){
 
     return new Promise((resolve, reject) => {
-    const socket = new WebSocket('ws://localhost:5001/ws/'+user_id);
+    const socket = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/ws/`+user_id);
     socket.onopen = function(event) { 
         resolve(socket)
      }; 
@@ -219,15 +109,23 @@ async function connect_ws(user_id){
 
 async function start_connection(){
     try { 
-        const socket = await connect_ws('your_user_id'); 
+        const socket = await connect_ws('Akshat'); 
         console.log('WebSocket connected successfully.'); // Example of sending a message through WebSocket 
         
-        setInterval(()=>{
-            if(audioQueue.length !=0)
-              socket.send(audioQueue.pop()); 
-            else{
-             console.log('audioQueue is empty!')
-            }
+        interval = setInterval(()=>{
+                    if(audioQueue.length !=0)
+                   {
+                    if (socket.readyState === WebSocket.OPEN) {
+                         socket.send(audioQueue.pop());
+                    } 
+                    else { 
+                        container2.querySelectorAll("h2")[1].innerText = "Disconnected ...";
+                        }
+                   } 
+                    else{
+                    console.log('audioQueue is empty!')
+                    }
+          
         },100)
         
         }
@@ -247,6 +145,7 @@ function scrollToBottom() {
 function receiveResponses(message) 
 {     
      const e = response.querySelectorAll('.assistant');
+     message = JSON.parse(message)
      if(message.responseType == 'user')
      {      
              response.innerHTML = response.innerHTML + `<div class="user"><div>${message.text}</div></div><div class="assistant"><div><i class="fa-solid fa-spinner fa-spin"></i></div></div>`;
@@ -288,7 +187,7 @@ startMic.onclick = async function () {
 
     container2.style.opacity= '1';
     container2.querySelectorAll("h2")[1].innerText = "Listening ...";
-    stat.innerHTML = `<i class="fa-sharp fa-solid fa-circle-notch fa-spin"></i>`;
+    strm.innerHTML = `<i class="fa-sharp fa-solid fa-circle-notch fa-spin"></i>`;
 
     responseContainer.style.cssText = `
                                width: 90vw;
@@ -310,7 +209,7 @@ startMic.onclick = async function () {
 
     }, 2000)
 
-    stat.onclick = async ()=>{
+    strm.onclick = async ()=>{
         stopRecording();
    }
 

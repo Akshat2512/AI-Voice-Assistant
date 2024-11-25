@@ -1,9 +1,10 @@
 from fastapi import WebSocket, FastAPI, Request
-
+import numpy as np
 from fastapi.templating import Jinja2Templates 
 from fastapi.staticfiles import StaticFiles 
 from fastapi.responses import HTMLResponse
-
+import io
+import base64
 import uvicorn
 
 from backend.speech_proccessing import process_audio_stream
@@ -21,7 +22,7 @@ load_dotenv()
 app = FastAPI()
 
 users_directory = {}    # maintain users database or their chat history in their where each key represents the user_id
-
+audio = []
 app.mount("/static", StaticFiles(directory="static"), name="static") 
 templates = Jinja2Templates(directory="templates")
 
@@ -49,11 +50,16 @@ async def chat(websocket: WebSocket, user_id: str):
    
         try:
             result = await handle_audio_new(websocket)
+
+            if not result:
+                print('Stopping background process')
+                process_task.cancel()
+
             
             await audio_queue.put(result)
             # print(audio_queue.qsize())
-            
-            asyncio.create_task(generate_ai_response(response_queue, websocket, user_id, chat_history))   #  for generating ai responses and send it back to the client
+            if not response_queue.empty():
+              asyncio.create_task(generate_ai_response(response_queue, websocket, user_id, chat_history))   #  for generating ai responses and send it back to the client
             # await asyncio.sleep(0.1)
             
             if not websocket.application_state.CONNECTED:
@@ -70,19 +76,26 @@ async def chat(websocket: WebSocket, user_id: str):
    
 
 async def handle_audio_new(websocket: WebSocket):  
+    
     try:
         audio_data = await websocket.receive_bytes()   # receives the audio stream from clients
-        # print(audio_data)
+    
+        with wave.open(io.BytesIO(audio_data), 'rb') as wav_file:
+        #    print(wav_file.getframerate(), wav_file.getsampwidth(), wav_file.getnchannels(), wav_file.getnframes())
+           audio_data = wav_file.readframes(wav_file.getnframes()) 
+      
         return audio_data
     except Exception as e:
+        print(e)
         print("Websocket gets Disconnected")
+        return False
         
     
 
 
 async def generate_ai_response(response_queue, websocket, user_id, chat_history):        
       
-      if not response_queue.empty():
+     
                
                audio_path = "backend/temp/"
                if not os.path.exists(audio_path):
@@ -130,6 +143,7 @@ async def generate_ai_response(response_queue, websocket, user_id, chat_history)
 
                     print('GPT-4o AI: ', response, "\n")
 
+
 def save_audio_to_file(audio_data, file_path):    # save audio to the folder temporary.
        CHANNELS=1
        sample_width = 2
@@ -137,6 +151,8 @@ def save_audio_to_file(audio_data, file_path):    # save audio to the folder tem
        num_samples = len(audio_data) // sample_width 
        original_duration = num_samples / RATE
        min_duration = 0.1
+
+    #    print(original_duration)
        if(original_duration > min_duration):
          with wave.open(file_path, 'wb') as wav_file:
            wav_file.setnchannels(CHANNELS)  # Mono audio
@@ -145,9 +161,11 @@ def save_audio_to_file(audio_data, file_path):    # save audio to the folder tem
           
            wav_file.writeframes(audio_data) # save file to folder
            return 'file saved'
+      
+           return 'file saved'
        else:
           return 'file is short'
   
 
 if __name__ == '__main__':
-   uvicorn.run(app, host='localhost', port=5001)
+   uvicorn.run(app, host='localhost', port=5000)
