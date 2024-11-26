@@ -15,7 +15,7 @@ let recorder;
 let audioStream;
 let mediaRecorder;
 let audioQueue = [];
-let intermediateBuffer = [];
+
 let interval;
 
 async function start_recording() {
@@ -38,7 +38,7 @@ async function start_recording() {
                 numberOfAudioChannels: 1,
                 desiredSampRate: 16000,
                 bufferSize: 1024,
-                timeSlice: 100,
+                timeSlice: 1000,
                 ondataavailable: function(Blob) {
                     const reader = new FileReader();
                     reader.onloadend = async function() { 

@@ -44,14 +44,14 @@ async def chat(websocket: WebSocket, user_id: str):
  
     audio_queue = asyncio.Queue()
     response_queue = asyncio.Queue()
-
+    buffer = io.BytesIO()
 
     process_task = asyncio.create_task(process_audio_stream(audio_queue, response_queue))   # It will create asynchrounous task to handle audio_queue in the background, detect speeches in the audio_queue using pre trained Model and add it to response_queue
    
     while True:
    
         try:
-            result = await handle_audio_new(websocket)
+            result = await handle_audio_new(websocket, audio_queue, buffer)
 
             if not result:
                 print('Stopping background process')
@@ -59,7 +59,7 @@ async def chat(websocket: WebSocket, user_id: str):
                 break
 
             
-            await audio_queue.put(result)
+            # await audio_queue.put(result)
             # print(audio_queue.qsize())
             if not response_queue.empty():
               asyncio.create_task(generate_ai_response(response_queue, websocket, user_id, chat_history))   #  for generating ai responses and send it back to the client
@@ -78,7 +78,7 @@ async def chat(websocket: WebSocket, user_id: str):
         
    
 
-async def handle_audio_new(websocket: WebSocket):  
+async def handle_audio_new(websocket: WebSocket, audio_queue, buffer):  
     
     try:
         audio_data = await websocket.receive_bytes()   # receives the audio stream from clients
@@ -87,10 +87,16 @@ async def handle_audio_new(websocket: WebSocket):
         await websocket.send_json({"Recieved":kolkata_time.strftime('%Y-%m-%d %H:%M:%S')})
 
         with wave.open(io.BytesIO(audio_data), 'rb') as wav_file:
-        #    print(wav_file.getframerate(), wav_file.getsampwidth(), wav_file.getnchannels(), wav_file.getnframes())
-           audio_data = wav_file.readframes(wav_file.getnframes()) 
-      
-        return audio_data
+            # print(wav_file.getframerate(), wav_file.getsampwidth(), wav_file.getnchannels(), wav_file.getnframes())
+           
+            while True:
+                audio_data = wav_file.readframes(1024)
+        
+                if not audio_data:
+                    break
+                await audio_queue.put(audio_data)      
+
+        return True
     except Exception as e:
         print(e)
         print("Websocket gets Disconnected")
