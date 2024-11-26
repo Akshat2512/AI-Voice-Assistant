@@ -5,13 +5,12 @@ import numpy as np
 import zipfile
 import time
 import tflite_runtime.interpreter as tflite
-# from tflite_runtime.interpreter import Interpreter
 
 TARGET_LENGTH = 15600
 
 
 model_path = "backend/model/1.tflite"
-interpreter = tflite.Interpreter(model_path)
+interpreter = tf.lite.Interpreter(model_path)
 
 interpreter.allocate_tensors()
 
