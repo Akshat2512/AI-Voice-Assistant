@@ -171,9 +171,9 @@ function receiveResponses(message)
      else if('Recieved' in message)
         {  
             console.log(`${message.Recieved}`);
+            return 0;
         }
      else
-        
          e[e.length-1].innerHTML =`<div>Content Policy Violation</div>`;
          
      console.table(message)
