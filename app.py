@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles 
 from fastapi.responses import HTMLResponse
 import io
-import base64
+
 import uvicorn
 
 from backend.speech_proccessing import process_audio_stream
@@ -15,7 +15,7 @@ import time, wave
 import asyncio
 import json
 import os
-from datetime import datetime
+# from datetime import datetime
 
 # from dotenv import load_dotenv # Load environment variables from .env file 
 
@@ -42,7 +42,7 @@ async def chat(websocket: WebSocket, user_id: str):
     
     await websocket.accept()
  
-    audio_queue = asyncio.Queue(maxsize=10)
+    audio_queue = asyncio.Queue()
     response_queue = asyncio.Queue()
 
 
@@ -56,13 +56,14 @@ async def chat(websocket: WebSocket, user_id: str):
             if not result:
                 print('Stopping background process')
                 process_task.cancel()
+                break
 
             
             await audio_queue.put(result)
             # print(audio_queue.qsize())
             if not response_queue.empty():
               asyncio.create_task(generate_ai_response(response_queue, websocket, user_id, chat_history))   #  for generating ai responses and send it back to the client
-            # await asyncio.sleep(0.1)
+
             
             if not websocket.application_state.CONNECTED:
                 break
@@ -81,10 +82,10 @@ async def handle_audio_new(websocket: WebSocket):
     
     try:
         audio_data = await websocket.receive_bytes()   # receives the audio stream from clients
-       
+         
         kolkata_time = datetime.now() # Print the current time 
-        
         await websocket.send_json({"Recieved":kolkata_time.strftime('%Y-%m-%d %H:%M:%S')})
+
         with wave.open(io.BytesIO(audio_data), 'rb') as wav_file:
         #    print(wav_file.getframerate(), wav_file.getsampwidth(), wav_file.getnchannels(), wav_file.getnframes())
            audio_data = wav_file.readframes(wav_file.getnframes()) 

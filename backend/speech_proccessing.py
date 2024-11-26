@@ -1,7 +1,7 @@
 
 # import wave
 import numpy as np
-# import tensorflow as tf
+# import tensorflow.lite as tflite
 import zipfile
 import time
 import tflite_runtime.interpreter as tflite
