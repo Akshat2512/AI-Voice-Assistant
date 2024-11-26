@@ -80,7 +80,7 @@ function stopRecording(){
 async function connect_ws(user_id){
 
     return new Promise((resolve, reject) => {
-    const socket = new WebSocket(`wss://ai-voice-assistant-id6f.onrender.com/ws/`+user_id);
+    const socket = new WebSocket(`wss://${window.location.hostname}/ws/`+user_id);
     socket.onopen = function(event) { 
         resolve(socket)
      }; 
