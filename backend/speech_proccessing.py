@@ -10,7 +10,7 @@ TARGET_LENGTH = 15600
 
 
 model_path = "backend/model/1.tflite"
-interpreter = tf.lite.Interpreter(model_path)
+interpreter = tflite.Interpreter(model_path)
 
 interpreter.allocate_tensors()
 
