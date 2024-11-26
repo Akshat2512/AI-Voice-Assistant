@@ -79,8 +79,8 @@ Then for starting application first start the fastapi server i.e., main_server.p
      python websocket.py &
      python app.py
 ```
-and To add your api_key as environment variable. You can also create .env file in root directory of your project and to access this environment variable use python-dotenv library to load environment variable
+And, to add your api_key as environment variable. You can also create .env file in root directory of your project and to access this environment variable use python-dotenv library to load environment variable
 <br>create .env file
 ```
-OPENAI_API_KEY = your_api_key
+   $OPENAI_API_KEY=<your_api_key>
 ```
