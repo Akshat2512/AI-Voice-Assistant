@@ -1,8 +1,8 @@
 from fastapi import WebSocket, FastAPI, Request
 import numpy as np
-# from fastapi.templating import Jinja2Templates 
-# from fastapi.staticfiles import StaticFiles 
-# from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates 
+from fastapi.staticfiles import StaticFiles 
+from fastapi.responses import HTMLResponse
 import io
 import base64
 import uvicorn
