@@ -80,7 +80,7 @@ function stopRecording(){
 async function connect_ws(user_id){
 
     return new Promise((resolve, reject) => {
-    const socket = new WebSocket(`wss://${window.location.hostname}/ws/`+user_id);
+    const socket = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/ws/`+user_id);
     socket.onopen = function(event) { 
         resolve(socket)
      }; 
@@ -115,13 +115,13 @@ async function start_connection(){
         interval = setInterval(()=>{
                     if(audioQueue.length !=0)
                    {
-                    if (socket.readyState === WebSocket.OPEN) {
-                         socket.send(audioQueue.pop());
-                    } 
-                    else { 
-                        container2.querySelectorAll("h2")[1].innerText = "Disconnected ...";
+                        if (socket.readyState === WebSocket.OPEN) {
+                            socket.send(audioQueue.pop());
+                        } 
+                     else { 
+                            container2.querySelectorAll("h2")[1].innerText = "Disconnected ...";
                         }
-                   } 
+                      } 
                     else{
                     console.log('audioQueue is empty!')
                     }
@@ -168,6 +168,10 @@ function receiveResponses(message)
      {  
         e[e.length-1].querySelector('div').innerText = `${message.text}`;
      }
+     else if('Recieved' in message)
+        {  
+            console.log(`${message.Recieved}`);
+        }
      else
         
          e[e.length-1].innerHTML =`<div>Content Policy Violation</div>`;

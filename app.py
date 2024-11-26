@@ -15,7 +15,8 @@ import time, wave
 import asyncio
 import json
 import os
-import pytz
+from datetime import datetime
+
 # from dotenv import load_dotenv # Load environment variables from .env file 
 
 # load_dotenv()
@@ -23,7 +24,7 @@ import pytz
 app = FastAPI()
 
 users_directory = {}    # maintain users database or their chat history in their where each key represents the user_id
-audio = []
+
 app.mount("/static", StaticFiles(directory="static"), name="static") 
 templates = Jinja2Templates(directory="templates")
 
@@ -80,10 +81,10 @@ async def handle_audio_new(websocket: WebSocket):
     
     try:
         audio_data = await websocket.receive_bytes()   # receives the audio stream from clients
-        kolkata_tz = pytz.timezone('Asia/Kolkata') # Get the current time in the Kolkata time zone 
-        kolkata_time = datetime.now(kolkata_tz) # Print the current time 
+       
+        kolkata_time = datetime.now() # Print the current time 
         
-        await websocket.send_json({"Recieved":{kolkata_time.strftime('%Y-%m-%d %H:%M:%S')}})
+        await websocket.send_json({"Recieved":kolkata_time.strftime('%Y-%m-%d %H:%M:%S')})
         with wave.open(io.BytesIO(audio_data), 'rb') as wav_file:
         #    print(wav_file.getframerate(), wav_file.getsampwidth(), wav_file.getnchannels(), wav_file.getnframes())
            audio_data = wav_file.readframes(wav_file.getnframes()) 

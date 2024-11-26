@@ -8,7 +8,6 @@ import tflite_runtime.interpreter as tflite
 
 TARGET_LENGTH = 15600
 
-
 model_path = "backend/model/1.tflite"
 interpreter = tflite.Interpreter(model_path)
 
@@ -24,6 +23,7 @@ scores_output_index = output_details[0]['index']
 with zipfile.ZipFile(model_path) as z:
     with z.open('yamnet_label_list.txt') as f:
         labels = [line.decode('utf-8').strip() for line in f]
+
 
 # Ensure the input tensor is correctly sized
 interpreter.resize_tensor_input(waveform_input_index, [TARGET_LENGTH], strict=False)
