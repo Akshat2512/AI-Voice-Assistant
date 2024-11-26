@@ -83,7 +83,7 @@ async def handle_audio_new(websocket: WebSocket):
         kolkata_tz = pytz.timezone('Asia/Kolkata') # Get the current time in the Kolkata time zone 
         kolkata_time = datetime.now(kolkata_tz) # Print the current time 
         
-        websocket.send_text(f"received on {kolkata_time.strftime('%Y-%m-%d %H:%M:%S')}")
+        await websocket.send_json({"Recieved":{kolkata_time.strftime('%Y-%m-%d %H:%M:%S')}})
         with wave.open(io.BytesIO(audio_data), 'rb') as wav_file:
         #    print(wav_file.getframerate(), wav_file.getsampwidth(), wav_file.getnchannels(), wav_file.getnframes())
            audio_data = wav_file.readframes(wav_file.getnframes()) 
