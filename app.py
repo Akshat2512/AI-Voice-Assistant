@@ -26,8 +26,6 @@ from dotenv import load_dotenv # Load environment variables from .env file
 load_dotenv()
 
 
-
-
 app = FastAPI()
 
 users_directory = {}    # maintain users database or their chat history in their where each key represents the user_id
