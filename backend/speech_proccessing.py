@@ -23,7 +23,7 @@ output_details = interpreter.get_output_details()
 waveform_input_index = input_details[0]['index']
 scores_output_index = output_details[0]['index']
 
-i = 0
+
 
 with zipfile.ZipFile(model_path) as z:
     with z.open('yamnet_label_list.txt') as f:
@@ -39,7 +39,7 @@ async def process_audio_stream(audio_queue, response_queue):
     audio_buffer = np.zeros(TARGET_LENGTH, dtype=np.float32)
     audio_chunks = []
     audio_data = b''
-       
+    i = 0
         # Open the audio stream
         
         # print("Listening... Press Ctrl+C to stop.")
