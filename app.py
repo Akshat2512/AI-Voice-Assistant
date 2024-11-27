@@ -44,7 +44,6 @@ async def chat(websocket: WebSocket, user_id: str):
 
     chat_history = users_directory[user_id]
      
-    websocket.client.extra["socket"].setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     await websocket.accept()
  
     audio_queue = asyncio.Queue()
