@@ -39,13 +39,10 @@ async def process_audio_stream(audio_queue, response_queue):
     audio_buffer = np.zeros(TARGET_LENGTH, dtype=np.float32)
     audio_chunks = []
     audio_data = b''
-        # Open the audio stream
-        
-        # print("Listening... Press Ctrl+C to stop.")
 
     speak = 0
     silence = 0
-        # Continuously read from the stream and append to audio_data
+        
   
     while True:
           try: 

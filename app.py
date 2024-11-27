@@ -10,7 +10,6 @@ import uvicorn
 from backend.speech_proccessing import process_audio_stream
 from backend.openai_models import transcribe_audio, generate_response, generate_image_response, ChatHistory
 
-
 import time, wave
 import asyncio
 import json
@@ -24,7 +23,6 @@ logger = logging.getLogger("uvicorn")
 from dotenv import load_dotenv # Load environment variables from .env file 
 
 load_dotenv()
-
 
 app = FastAPI()
 
@@ -40,19 +38,20 @@ async def get(request: Request):
 
 @app.websocket('/ws/{user_id}')     # will be responsible for handling real time stream of audio chunks and all AI generated responses will be sent to the streamer client 
 async def chat(websocket: WebSocket, user_id: str):
-    i = 0
+    
     if user_id not in users_directory: 
         users_directory[user_id] = ChatHistory()   # creates an instance of the ChatHistory class and each user will have their own instance of ChatHistory
 
     chat_history = users_directory[user_id]
-     
+    
     await websocket.accept()
  
     audio_queue = asyncio.Queue()
     response_queue = asyncio.Queue()
 
     process_task = asyncio.create_task(process_audio_stream(audio_queue, response_queue))   # It will create asynchrounous task to handle audio_queue in the background, detect speeches in the audio_queue using pre trained Model and add it to response_queue
-   
+    
+    i = 0
     while True:
         
         try:
@@ -69,6 +68,7 @@ async def chat(websocket: WebSocket, user_id: str):
             # print(audio_queue.qsize())
             if not response_queue.empty():
               logger.info('Speech detected')
+              await asyncio.sleep(0.1)
               await generate_ai_response(response_queue, websocket, user_id, chat_history)   #  for generating ai responses and send it back to the client
 
             
@@ -100,7 +100,7 @@ async def handle_audio_new(websocket: WebSocket, audio_queue):
         
                 if not audio_data:
                     break
-                await audio_queue.put(audio_data)      
+                await audio_queue.put(audio_data)    
 
         return True
     except Exception as e:
