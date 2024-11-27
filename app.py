@@ -123,7 +123,7 @@ async def generate_ai_response(response_queue, websocket, user_id, chat_history)
                   
                   if len(prompt) >= 2:
                    
-                    logger.info('Transcribing: ', prompt)
+                    logger.info('Transcribing: %s', prompt)
 
                     message = {"responseType" : "user", "text" : prompt[:-1]}
                     # message = json.dumps(message)
