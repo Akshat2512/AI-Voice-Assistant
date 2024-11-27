@@ -10,6 +10,7 @@ import uvicorn
 from backend.speech_proccessing import process_audio_stream
 from backend.openai_models import transcribe_audio, generate_response, generate_image_response, ChatHistory
 
+
 import time, wave
 import asyncio
 import json
