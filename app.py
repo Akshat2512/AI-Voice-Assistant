@@ -20,9 +20,9 @@ from datetime import datetime
 import logging
 logger = logging.getLogger("uvicorn")
 
-from dotenv import load_dotenv # Load environment variables from .env file 
+# from dotenv import load_dotenv # Load environment variables from .env file 
 
-load_dotenv()
+# load_dotenv()
 
 app = FastAPI()
 
@@ -43,7 +43,8 @@ async def chat(websocket: WebSocket, user_id: str):
         users_directory[user_id] = ChatHistory()   # creates an instance of the ChatHistory class and each user will have their own instance of ChatHistory
 
     chat_history = users_directory[user_id]
-    
+     
+    websocket.client.extra["socket"].setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     await websocket.accept()
  
     audio_queue = asyncio.Queue()
