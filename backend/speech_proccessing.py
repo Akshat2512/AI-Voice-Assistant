@@ -1,10 +1,10 @@
 
 # import wave
 import numpy as np
-# import tensorflow.lite as tflite
+import tensorflow.lite as tflite
 import zipfile
 import time
-import tflite_runtime.interpreter as tflite
+# import tflite_runtime.interpreter as tflite
 
 import logging
 
@@ -23,6 +23,7 @@ output_details = interpreter.get_output_details()
 waveform_input_index = input_details[0]['index']
 scores_output_index = output_details[0]['index']
 
+i = 0
 
 with zipfile.ZipFile(model_path) as z:
     with z.open('yamnet_label_list.txt') as f:
@@ -69,7 +70,8 @@ async def process_audio_stream(audio_queue, response_queue):
             # await response_queue.put(prediction)
             # print(response_queue.qsize())
             # print(prediction, len(audio_data) )
-            logger.info("%s, %d", prediction, len(audio_data))
+            i = i + 1
+            logger.info("%s, %d", prediction, len(audio_data), i)
 
             if( prediction == 'Speech'):
                 audio_chunks.append(audio_data)

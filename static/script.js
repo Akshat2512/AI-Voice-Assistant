@@ -17,7 +17,7 @@ let mediaRecorder;
 let audioQueue = [];
 
 let interval;
-
+let  i = 0
 async function start_recording() {
            
             startMic.disabled = true;
@@ -80,7 +80,7 @@ function stopRecording(){
 async function connect_ws(user_id){
 
     return new Promise((resolve, reject) => {
-    const socket = new WebSocket(`wss://${window.location.hostname}:${window.location.port}/ws/`+user_id);
+    const socket = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/ws/`+user_id);
     socket.onopen = function(event) { 
         resolve(socket)
      }; 
@@ -118,6 +118,8 @@ async function start_connection(){
                    {
                         if (socket.readyState === WebSocket.OPEN) {
                             socket.send(audioQueue.pop());
+                            i = i+1
+                            console.log(i)
                         } 
                      else { 
                             container2.querySelectorAll("h2")[1].innerText = "Disconnected ...";
