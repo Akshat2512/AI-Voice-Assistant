@@ -6,6 +6,11 @@ import zipfile
 import time
 import tflite_runtime.interpreter as tflite
 
+import logging
+
+
+logger = logging.getLogger("uvicorn")  # Using the current module's name
+
 TARGET_LENGTH = 15600
 
 model_path = "backend/model/1.tflite"
@@ -64,8 +69,9 @@ async def process_audio_stream(audio_queue, response_queue):
             prediction = labels[top_class_index]
             # await response_queue.put(prediction)
             # print(response_queue.qsize())
-            print(prediction, len(audio_data) )
-            logger.info("root called")
+            # print(prediction, len(audio_data) )
+            logger.info("%s, %d", prediction, len(audio_data))
+
             if( prediction == 'Speech'):
                 audio_chunks.append(audio_data)
                 # await response_queue.put(audio_data)

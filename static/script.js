@@ -111,7 +111,8 @@ async function start_connection(){
     try { 
         const socket = await connect_ws('Akshat'); 
         console.log('WebSocket connected successfully.'); // Example of sending a message through WebSocket 
-        
+        start_recording();
+
         interval = setInterval(()=>{
                     if(audioQueue.length !=0)
                    {
@@ -208,7 +209,7 @@ startMic.onclick = async function () {
          e.style.opacity = '1';
         })
 
-      start_recording();
+      
       start_connection();
 
     }, 2000)
