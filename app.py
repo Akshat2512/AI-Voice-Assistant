@@ -16,6 +16,10 @@ import json
 import os
 from datetime import datetime
 
+
+import logging
+logger = logging.getLogger("uvicorn")
+
 # from dotenv import load_dotenv # Load environment variables from .env file 
 
 # load_dotenv()
@@ -106,8 +110,6 @@ async def handle_audio_new(websocket: WebSocket, audio_queue, buffer):
 
 async def generate_ai_response(response_queue, websocket, user_id, chat_history):        
       
-     
-               
                audio_path = "backend/temp/"
                if not os.path.exists(audio_path):
                   os.makedirs(audio_path)
@@ -120,11 +122,12 @@ async def generate_ai_response(response_queue, websocket, user_id, chat_history)
                   
                   if len(prompt) >= 2:
                    
-                    print('Transcribing: ', prompt)
+                    logger.info('Transcribing: ', prompt)
 
                     message = {"responseType" : "user", "text" : prompt[:-1]}
                     # message = json.dumps(message)
                     await websocket.send_json(message)
+                    
                     
                     response = generate_response(prompt, os.getenv('OPENAI_API_KEY'), chat_history)  # generate natural language using gpt-4o model  
                     await asyncio.sleep(0.1)
@@ -152,7 +155,8 @@ async def generate_ai_response(response_queue, websocket, user_id, chat_history)
                         # message = json.dumps(message)
                         await websocket.send_json(message)
 
-                    print('GPT-4o AI: ', response, "\n")
+                    logger.info('GPT-4o AI: %s', response)
+
 
 
 def save_audio_to_file(audio_data, file_path):    # save audio to the folder temporary.

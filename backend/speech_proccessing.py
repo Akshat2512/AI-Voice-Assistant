@@ -8,7 +8,6 @@ import tflite_runtime.interpreter as tflite
 
 import logging
 
-
 logger = logging.getLogger("uvicorn")  # Using the current module's name
 
 TARGET_LENGTH = 15600
