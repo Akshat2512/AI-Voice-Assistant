@@ -65,6 +65,7 @@ async def chat(websocket: WebSocket, user_id: str):
             # await audio_queue.put(result)
             # print(audio_queue.qsize())
             if not response_queue.empty():
+              logger.info('Speech detected')
               asyncio.create_task(generate_ai_response(response_queue, websocket, user_id, chat_history))   #  for generating ai responses and send it back to the client
 
             
