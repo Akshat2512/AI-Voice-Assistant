@@ -15,7 +15,7 @@ import time, wave
 import asyncio
 import json
 import os
-# from datetime import datetime
+from datetime import datetime
 
 # from dotenv import load_dotenv # Load environment variables from .env file 
 
@@ -83,8 +83,8 @@ async def handle_audio_new(websocket: WebSocket, audio_queue, buffer):
     try:
         audio_data = await websocket.receive_bytes()   # receives the audio stream from clients
          
-        # kolkata_time = datetime.now() # Print the current time 
-        # await websocket.send_json({"Recieved":kolkata_time.strftime('%Y-%m-%d %H:%M:%S')})
+        kolkata_time = datetime.now() # Print the current time 
+        await websocket.send_json({"Recieved":kolkata_time.strftime('%Y-%m-%d %H:%M:%S')})
 
         with wave.open(io.BytesIO(audio_data), 'rb') as wav_file:
             # print(wav_file.getframerate(), wav_file.getsampwidth(), wav_file.getnchannels(), wav_file.getnframes())
