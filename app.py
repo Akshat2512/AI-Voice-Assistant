@@ -31,13 +31,14 @@ users_directory = {}    # maintain users database or their chat history in their
 app.mount("/static", StaticFiles(directory="static"), name="static") 
 templates = Jinja2Templates(directory="templates")
 
+
 @app.get("/", response_class=HTMLResponse) 
 async def get(request: Request): 
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.websocket('/ws/{user_id}')     # will be responsible for handling real time stream of audio chunks and all AI generated responses will be sent to the streamer client 
 async def chat(websocket: WebSocket, user_id: str):
-    
+    i = 0
     if user_id not in users_directory: 
         users_directory[user_id] = ChatHistory()   # creates an instance of the ChatHistory class and each user will have their own instance of ChatHistory
 
@@ -47,15 +48,15 @@ async def chat(websocket: WebSocket, user_id: str):
  
     audio_queue = asyncio.Queue()
     response_queue = asyncio.Queue()
-    buffer = io.BytesIO()
 
     process_task = asyncio.create_task(process_audio_stream(audio_queue, response_queue))   # It will create asynchrounous task to handle audio_queue in the background, detect speeches in the audio_queue using pre trained Model and add it to response_queue
    
     while True:
-   
+        
         try:
-            result = await handle_audio_new(websocket, audio_queue, buffer)
-
+            result = await handle_audio_new(websocket, audio_queue)
+            logger.info('%d', i)
+            i = i + 1
             if not result:
                 print('Stopping background process')
                 process_task.cancel()
@@ -82,11 +83,10 @@ async def chat(websocket: WebSocket, user_id: str):
         
    
 
-async def handle_audio_new(websocket: WebSocket, audio_queue, buffer):  
+async def handle_audio_new(websocket: WebSocket, audio_queue):  
     
     try:
         audio_data = await websocket.receive_bytes()   # receives the audio stream from clients
-         
         kolkata_time = datetime.now() # Print the current time 
         await websocket.send_json({"Recieved":kolkata_time.strftime('%Y-%m-%d %H:%M:%S')})
 

@@ -39,7 +39,6 @@ async def process_audio_stream(audio_queue, response_queue):
     audio_buffer = np.zeros(TARGET_LENGTH, dtype=np.float32)
     audio_chunks = []
     audio_data = b''
-    i = 0
         # Open the audio stream
         
         # print("Listening... Press Ctrl+C to stop.")
@@ -70,8 +69,8 @@ async def process_audio_stream(audio_queue, response_queue):
             # await response_queue.put(prediction)
             # print(response_queue.qsize())
             # print(prediction, len(audio_data) )
-            i = i + 1
-            logger.info("%s, %d, %d", prediction, len(audio_data), i)
+           
+            logger.info("%s, %d", prediction, len(audio_data))
 
             if( prediction == 'Speech'):
                 audio_chunks.append(audio_data)
