@@ -21,9 +21,12 @@ from datetime import datetime
 import logging
 logger = logging.getLogger("uvicorn")
 
-# from dotenv import load_dotenv # Load environment variables from .env file 
+from dotenv import load_dotenv # Load environment variables from .env file 
 
-# load_dotenv()
+load_dotenv()
+
+
+
 
 app = FastAPI()
 
