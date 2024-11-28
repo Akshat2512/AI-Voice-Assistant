@@ -86,7 +86,7 @@ function stopRecording(){
     
 
     recorder.stopRecording();
-    
+
     container2.querySelectorAll("h2")[1].innerText = " ... ";
     strm.innerHTML = '<i class="fa-regular fa-circle-pause"></i>';
     audioStream.getTracks().forEach(track => track.stop());
@@ -106,7 +106,7 @@ function stopRecording(){
 async function connect_ws(user_id){
 
     return new Promise((resolve, reject) => {
-    const socket = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/ws/`+user_id);
+    const socket = new WebSocket(`wss://${window.location.hostname}:${window.location.port}/ws/`+user_id);
     socket.onopen = function(event) { 
         resolve(socket)
      }; 
