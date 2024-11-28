@@ -123,8 +123,7 @@ async function connect_ws(user_id){
     };
     
     socket.onmessage = function(event) { 
-        const latency = Date.now() - parseInt(event.data, 10); 
-        document.getElementById('latency').textContent = `Latency: ${latency} ms`;
+    
         console.log('Message from server:', event.data);
         receiveResponses(event.data)
         // const messagesDiv = document.getElementById('messages');
