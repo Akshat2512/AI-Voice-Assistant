@@ -11,7 +11,7 @@ body {
     transition: ease-in-out 0.7s;
 }
 
-#recorder-container {  
+#message-container {  
     /* position:relative; */
     display: flex;
     align-items: center;

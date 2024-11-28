@@ -1,5 +1,5 @@
 const startMic = document.getElementById('start-mic');
-const responseContainer = document.getElementById('recorder-container');
+const responseContainer = document.getElementById('message-container');
 const titleContainer = document.getElementById('title-container');
 const container2 = document.getElementById('container-2');
 const strm = document.getElementById('stream');
@@ -15,8 +15,9 @@ let recorder;
 let audioStream;
 let mediaRecorder;
 let audioQueue = [];
-
+let socket;
 let interval;
+
 let  i = 0
 async function start_recording() {
            
@@ -44,7 +45,7 @@ async function start_recording() {
                     reader.onloadend = async function() { 
                         const audio_bytes = reader.result;
                         audioQueue.unshift(audio_bytes)
-                        
+
                         };
                     reader.readAsArrayBuffer(Blob);
                     
@@ -53,24 +54,49 @@ async function start_recording() {
 
             // Start recording
             recorder.startRecording();
+
+            interval = setInterval(()=>{
+                if(audioQueue.length !=0)
+               {
+                    if (socket.readyState === WebSocket.OPEN) {
+                        socket.send(audioQueue.pop());
+                        i = i+1
+                        console.log(i)
+                    } 
+                 else { 
+                        container2.querySelectorAll("h2")[1].innerText = "Disconnected ...";
+                    }
+                } 
+                else
+                {
+                console.log('audioQueue is empty!')
+                }
+
+                strm.onclick = stopRecording;
+               
+      
+    },100)
         }
         catch (err){
             console.log('Microphone access is denied')
         }
     }
-      
-
+   
 function stopRecording(){
-    recorder.stopRecording(function() {
-        // Release microphone
-        container2.querySelectorAll("h2")[1].innerText = " ... ";
-        strm.innerHTML = '<i class="fa-regular fa-circle-pause"></i>';
-        audioStream.getTracks().forEach(track => track.stop());
-        clearInterval(interval)
-    });
-    strm.onclick = async ()=>{
-        startMic.onclick();
-    }
+    
+
+    recorder.stopRecording();
+    
+    container2.querySelectorAll("h2")[1].innerText = " ... ";
+    strm.innerHTML = '<i class="fa-regular fa-circle-pause"></i>';
+    audioStream.getTracks().forEach(track => track.stop());
+    clearInterval(interval);
+
+    strm.onclick = ()=>{
+            container2.querySelectorAll("h2")[1].innerText = "Listening ...";
+            strm.innerHTML = `<i class="fa-sharp fa-solid fa-circle-notch fa-spin"></i>`;
+            start_recording()
+        }
     
 
 }
@@ -80,7 +106,7 @@ function stopRecording(){
 async function connect_ws(user_id){
 
     return new Promise((resolve, reject) => {
-    const socket = new WebSocket(`wss://${window.location.hostname}:${window.location.port}/ws/`+user_id);
+    const socket = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/ws/`+user_id);
     socket.onopen = function(event) { 
         resolve(socket)
      }; 
@@ -109,27 +135,9 @@ async function connect_ws(user_id){
 
 async function start_connection(){
     try { 
-        const socket = await connect_ws('Akshat'); 
+        socket = await connect_ws('Akshat'); 
         console.log('WebSocket connected successfully.'); // Example of sending a message through WebSocket 
         start_recording();
-
-        interval = setInterval(()=>{
-                    if(audioQueue.length !=0)
-                   {
-                        if (socket.readyState === WebSocket.OPEN) {
-                            socket.send(audioQueue.pop());
-                            i = i+1
-                            console.log(i)
-                        } 
-                     else { 
-                            container2.querySelectorAll("h2")[1].innerText = "Disconnected ...";
-                        }
-                      } 
-                    else{
-                    console.log('audioQueue is empty!')
-                    }
-          
-        },100)
         
         }
        
@@ -216,9 +224,7 @@ startMic.onclick = async function () {
 
     }, 2000)
 
-    strm.onclick = async ()=>{
-        stopRecording();
-   }
+   
 
 };
 
