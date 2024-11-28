@@ -39,7 +39,7 @@ async function start_recording() {
                 numberOfAudioChannels: 1,
                 desiredSampRate: 16000,
                 bufferSize: 1024,
-                timeSlice: 3000,
+                timeSlice: 100,
                 ondataavailable: function(Blob) {
                     const reader = new FileReader();
                     reader.onloadend = async function() { 
@@ -60,8 +60,6 @@ async function start_recording() {
                {
                     if (socket.readyState === WebSocket.OPEN) {
                         socket.send(audioQueue.pop());
-                        i = i+1
-                        console.log(i)
                     } 
                  else { 
                         container2.querySelectorAll("h2")[1].innerText = "Disconnected ...";

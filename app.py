@@ -10,7 +10,6 @@ import uvicorn
 from backend.speech_proccessing import process_audio_stream
 from backend.openai_models import transcribe_audio, generate_response, generate_image_response, ChatHistory
 
-import pytz
 import time, wave
 import asyncio
 import json
@@ -18,8 +17,6 @@ import os
 from datetime import datetime
 
 
-import logging
-logger = logging.getLogger("uvicorn")
 
 from dotenv import load_dotenv # Load environment variables from .env file 
 
@@ -51,14 +48,12 @@ async def chat(websocket: WebSocket, user_id: str):
     response_queue = asyncio.Queue()
 
     process_task = asyncio.create_task(process_audio_stream(audio_queue, response_queue))   # It will create asynchrounous task to handle audio_queue in the background, detect speeches in the audio_queue using pre trained Model and add it to response_queue
-    
-    i = 0
+   
     while True:
         
         try:
             result = await handle_audio_new(websocket, audio_queue)
-            logger.info('%d', i)
-            i = i + 1
+  
             if not result:
                 print('Stopping background process')
                 process_task.cancel()
@@ -68,7 +63,6 @@ async def chat(websocket: WebSocket, user_id: str):
             # await audio_queue.put(result)
             # print(audio_queue.qsize())
             if not response_queue.empty():
-              logger.info('Speech detected')
               await asyncio.sleep(0.1)
               await generate_ai_response(response_queue, websocket, user_id, chat_history)   #  for generating ai responses and send it back to the client
 
@@ -90,10 +84,6 @@ async def handle_audio_new(websocket: WebSocket, audio_queue):
     
     try:
         audio_data = await websocket.receive_bytes()   # receives the audio stream from clients
-
-        kolkata_tz = pytz.timezone('Asia/Kolkata')
-        kolkata_time = datetime.now(kolkata_tz) # Print the current time 
-        await websocket.send_json({"Recieved":kolkata_time.strftime('%Y-%m-%d %H:%M:%S')})
 
         with wave.open(io.BytesIO(audio_data), 'rb') as wav_file:
             # print(wav_file.getframerate(), wav_file.getsampwidth(), wav_file.getnchannels(), wav_file.getnframes())
