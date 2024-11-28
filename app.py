@@ -10,6 +10,7 @@ import uvicorn
 from backend.speech_proccessing import process_audio_stream
 from backend.openai_models import transcribe_audio, generate_response, generate_image_response, ChatHistory
 
+import pytz
 import time, wave
 import asyncio
 import json
@@ -17,6 +18,8 @@ import os
 from datetime import datetime
 
 
+import logging
+logger = logging.getLogger("uvicorn")
 
 from dotenv import load_dotenv # Load environment variables from .env file 
 
