@@ -106,7 +106,7 @@ function stopRecording(){
 async function connect_ws(user_id){
 
     return new Promise((resolve, reject) => {
-    const socket = new WebSocket(`wss://${window.location.hostname}:${window.location.port}/ws/`+user_id);
+    const socket = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/ws/`+user_id);
     socket.onopen = function(event) { 
         resolve(socket)
      }; 
@@ -123,7 +123,8 @@ async function connect_ws(user_id){
     };
     
     socket.onmessage = function(event) { 
-    
+        const latency = Date.now() - parseInt(event.data, 10); 
+        document.getElementById('latency').textContent = `Latency: ${latency} ms`;
         console.log('Message from server:', event.data);
         receiveResponses(event.data)
         // const messagesDiv = document.getElementById('messages');
