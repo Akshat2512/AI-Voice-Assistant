@@ -39,7 +39,7 @@ async function start_recording() {
                 numberOfAudioChannels: 1,
                 desiredSampRate: 16000,
                 bufferSize: 1024,
-                timeSlice: 1000,
+                timeSlice: 3000,
                 ondataavailable: function(Blob) {
                     const reader = new FileReader();
                     reader.onloadend = async function() { 
@@ -106,7 +106,7 @@ function stopRecording(){
 async function connect_ws(user_id){
 
     return new Promise((resolve, reject) => {
-    const socket = new WebSocket(`wss://${window.location.hostname}:${window.location.port}/ws/`+user_id);
+    const socket = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/ws/`+user_id);
     socket.onopen = function(event) { 
         resolve(socket)
      }; 

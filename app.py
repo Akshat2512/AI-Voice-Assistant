@@ -10,6 +10,7 @@ import uvicorn
 from backend.speech_proccessing import process_audio_stream
 from backend.openai_models import transcribe_audio, generate_response, generate_image_response, ChatHistory
 
+import pytz
 import time, wave
 import asyncio
 import json
@@ -89,7 +90,9 @@ async def handle_audio_new(websocket: WebSocket, audio_queue):
     
     try:
         audio_data = await websocket.receive_bytes()   # receives the audio stream from clients
-        kolkata_time = datetime.now() # Print the current time 
+
+        kolkata_tz = pytz.timezone('Asia/Kolkata')
+        kolkata_time = datetime.now(kolkata_tz) # Print the current time 
         await websocket.send_json({"Recieved":kolkata_time.strftime('%Y-%m-%d %H:%M:%S')})
 
         with wave.open(io.BytesIO(audio_data), 'rb') as wav_file:
