@@ -56,8 +56,7 @@ async def chat(websocket: WebSocket, user_id: str):
         
         try:
             result = await handle_audio_new(websocket, audio_queue)
-  
-            if not result:
+            if result==False:
                 print('Stopping background process')
                 process_task.cancel()
                 break
@@ -65,10 +64,11 @@ async def chat(websocket: WebSocket, user_id: str):
             
             # await audio_queue.put(result)
             # print(audio_queue.qsize())
-            if not response_queue.empty():
+            if not response_queue.empty() or result:
               await asyncio.sleep(0.1)
-              await generate_ai_response(response_queue, websocket, user_id, chat_history)   #  for generating ai responses and send it back to the client
-
+              await generate_ai_response(response_queue, websocket, user_id, chat_history, prompt = result)   #  for generating ai responses and send it back to the client
+            
+    
             
             if not websocket.application_state.CONNECTED:
                 break
@@ -78,7 +78,7 @@ async def chat(websocket: WebSocket, user_id: str):
         except Exception as e:
           
             # print(f"Connection error: {e}")
-            await websocket.send_text('connection_closed')
+            await websocket.send_json({"status":"connection closed"})
             await websocket.close()
         
    
@@ -86,19 +86,23 @@ async def chat(websocket: WebSocket, user_id: str):
 async def handle_audio_new(websocket: WebSocket, audio_queue):  
     
     try:
-        audio_data = await websocket.receive_bytes()   # receives the audio stream from clients
+        message = await websocket.receive()   # receives the audio stream from clients
+        if "bytes" in message:
+            with wave.open(io.BytesIO(message["bytes"]), 'rb') as wav_file:
+                # print(wav_file.getframerate(), wav_file.getsampwidth(), wav_file.getnchannels(), wav_file.getnframes())
+            
+                while True:
+                    audio_data = wav_file.readframes(1024)
+            
+                    if not audio_data:
+                        break
+                    await audio_queue.put(audio_data)    
+                return None
 
-        with wave.open(io.BytesIO(audio_data), 'rb') as wav_file:
-            # print(wav_file.getframerate(), wav_file.getsampwidth(), wav_file.getnchannels(), wav_file.getnframes())
-           
-            while True:
-                audio_data = wav_file.readframes(1024)
-        
-                if not audio_data:
-                    break
-                await audio_queue.put(audio_data)    
+        elif "text" in message:
+            prompt = message['text']
+            return prompt
 
-        return True
     except Exception as e:
         print(e)
         print("Websocket gets Disconnected")
@@ -107,8 +111,9 @@ async def handle_audio_new(websocket: WebSocket, audio_queue):
     
 
 
-async def generate_ai_response(response_queue, websocket, user_id, chat_history):        
-      
+async def generate_ai_response(response_queue, websocket, user_id, chat_history, prompt):        
+               
+            if prompt == None:
                audio_path = "backend/temp/"
                if not os.path.exists(audio_path):
                   os.makedirs(audio_path)
@@ -118,43 +123,42 @@ async def generate_ai_response(response_queue, websocket, user_id, chat_history)
 
                if result == 'file saved':
                   prompt = transcribe_audio(audio_path+f'recording_{user_id}.wav', os.getenv('OPENAI_API_KEY'))  # generate texts from audio using whisper-1 model
-                  
-                  if len(prompt) >= 2:
-                   
-                    logger.info('Transcribing: %s', prompt)
-
-                    message = {"responseType" : "user", "text" : prompt[:-1]}
+            
+            if len(prompt) >= 2:
+            
+                logger.info('User: %s', prompt)
+                message = {"responseType" : "user", "text" : prompt}
+                # message = json.dumps(message)
+                await websocket.send_json(message)
+                
+                
+                response = generate_response(prompt, os.getenv('OPENAI_API_KEY'), chat_history)  # generate natural language using gpt-4o model  
+                await asyncio.sleep(0.1)
+                
+                if "CALL DALL-E" == response:
+                    message = {"responseType" : "assistant", "text": response}
                     # message = json.dumps(message)
                     await websocket.send_json(message)
-                    
-                    
-                    response = generate_response(prompt, os.getenv('OPENAI_API_KEY'), chat_history)  # generate natural language using gpt-4o model  
                     await asyncio.sleep(0.1)
-                    
-                    if "CALL DALL-E" == response:
-                        message = {"responseType" : "assistant", "text": response}
-                        # message = json.dumps(message)
-                        await websocket.send_json(message)
-                        await asyncio.sleep(0.1)
 
-                        print('Generating Image ...')
-                    
-                        image = generate_image_response(prompt, os.getenv('OPENAI_API_KEY')) # generate image from text using DALL-E-3 model
-                           
-                        try:
-                            message = {"responseType" : "assistant", "revised_prompt":image.revised_prompt, "image_url": image.url}
-                        except Exception as e:
-                            await websocket.send_json('{"status": "error"}')
+                    print('Generating Image ...')
+                
+                    image = generate_image_response(prompt, os.getenv('OPENAI_API_KEY')) # generate image from text using DALL-E-3 model
+                        
+                    try:
+                        message = {"responseType" : "assistant", "revised_prompt":image.revised_prompt, "image_url": image.url}
+                    except Exception as e:
+                        await websocket.send_json({"status": "error"})
+                        return False
+                    # message = json.dumps(message)
+                    await websocket.send_json(message)
+                    # print(message)
+                else:
+                    message = {"responseType" : "assistant", "text" : response}
+                    # message = json.dumps(message)
+                    await websocket.send_json(message)
 
-                        # message = json.dumps(message)
-                        await websocket.send_json(message)
-                        # print(message)
-                    else:
-                        message = {"responseType" : "assistant", "text" : response}
-                        # message = json.dumps(message)
-                        await websocket.send_json(message)
-
-                    logger.info('GPT-4o AI: %s', response)
+                logger.info('GPT-4o AI: %s', response)
 
 
 

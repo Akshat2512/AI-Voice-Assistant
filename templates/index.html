@@ -10,23 +10,34 @@
     
 </head>
 <body>
+    <div id="status"></div>
     <div id="message-container">
        <div id="title-container">
         <h2>AI Assistant</h2>
-        <button id="start-mic">Start</button>
+        <input id="uname" type="name" placeholder="User name ..." autocomplete="off"/>
+        <button id="start-mic" type="submit">Start</button>
        </div>
        <div class="response">
-       
+         
       </div>
     </div>
 
     
-    <div id="container-2">
-              <h2>AI Assistant</h2> 
-              <div id="stream"><i class="fa-sharp fa-solid fa-circle-notch fa-spin"></i></div>
-              <h2>Listening ...</h2>
+    <div id = "send-container">
+        <div id='writer'>
+            <textarea rows="10" cols="30" placeholder="Type ..."></textarea>
+            <div id="send"><i class="fa-solid fa-location-arrow"></i></div>
+        </div>
+
+        <div id="listener">
+            <h2>AI Assistant</h2> 
+            <div><div id="stream"><i class="fa-solid fa-microphone"></i></div></div>
+            <h2>Listening ...</h2>
+       </div>
+      
+        <div id = "fa-keyboard"><i class="fa-solid fa-keyboard"></i></div>
     </div>
-    <div id="status"></div>
+    
 
 <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
 <script type="text/javascript" src="static/script.js"></script>

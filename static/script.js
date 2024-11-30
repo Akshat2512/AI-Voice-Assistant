@@ -1,14 +1,21 @@
-const startMic = document.getElementById('start-mic');
+const start = document.getElementById('start-mic');
 const responseContainer = document.getElementById('message-container');
 const titleContainer = document.getElementById('title-container');
-const container2 = document.getElementById('container-2');
+const sendContainer = document.getElementById('send-container');
+const listener = document.getElementById('listener');
+const writer = document.getElementById('writer');
+const fa_keyboard = document.getElementById('fa-keyboard');
 const strm = document.getElementById('stream');
 const response = document.querySelector('.response');
-
+const ws_status = document.querySelector('#status');
 const uname = document.querySelector('#uname');
+const send = document.querySelector('#send');
 
-
-setTimeout(() => responseContainer.style.opacity = '1', 1000);
+setTimeout(() => {
+    username = localStorage.getItem('uname');
+    uname.value = username;
+    responseContainer.style.opacity = '1'
+}, 1000);
 
 
 let recorder;
@@ -20,16 +27,15 @@ let interval;
 
 let  i = 0
 async function start_recording() {
-           
-            startMic.disabled = true;
-            container2.querySelectorAll("h2")[1].innerText = "Listening ...";
-            document.getElementById('status').disabled = false;
+            
+            start.disabled = true;
+            strm.innerHTML = `<i class="fa-solid fa-microphone fa-fade"></i>`;
 
             // Get access to the microphone
             try {
             audioStream = await navigator.mediaDevices.getUserMedia({ audio: true});
             console.log('Microphone access is granted')
-
+            strm.style.opacity = '1';
             
             // Initialize the recorder
             recorder = new RecordRTC(audioStream, {
@@ -44,8 +50,7 @@ async function start_recording() {
                     const reader = new FileReader();
                     reader.onloadend = async function() { 
                         const audio_bytes = reader.result;
-                        audioQueue.unshift(audio_bytes)
-
+                        audioQueue.unshift(audio_bytes);
                         };
                     reader.readAsArrayBuffer(Blob);
                     
@@ -61,8 +66,9 @@ async function start_recording() {
                     if (socket.readyState === WebSocket.OPEN) {
                         socket.send(audioQueue.pop());
                     } 
-                 else { 
-                        container2.querySelectorAll("h2")[1].innerText = "Disconnected ...";
+                    else { 
+                      ws_status.innerText = "Disconnected";
+                      ws_status.style.backgroundColor = "grey";
                     }
                 } 
                 else
@@ -70,30 +76,57 @@ async function start_recording() {
                 console.log('audioQueue is empty!')
                 }
 
-                strm.onclick = stopRecording;
-               
+                strm.onclick = ()=>{
+                    flag = 1;
+                    fa_keyboard.style.zIndex='1';
+                    stop_recording();
+                    console.log(flag)
+                }
       
     },100)
+
+    setTimeout(async ()=>{
+        
+        listener.style.gap = '40px';
+        listener.querySelectorAll("h2").forEach(e=>{
+         e.style.opacity = '1';
+        })
+
+    })
+
         }
         catch (err){
             console.log('Microphone access is denied')
         }
     }
-   
-function stopRecording(){
+
+let flag = 0
+function stop_recording(){
+    try{
     
-
     recorder.stopRecording();
-
-    container2.querySelectorAll("h2")[1].innerText = " ... ";
-    strm.innerHTML = '<i class="fa-regular fa-circle-pause"></i>';
+  
+    strm.innerHTML = '<i class="fa-solid fa-microphone"></i>';
     audioStream.getTracks().forEach(track => track.stop());
     clearInterval(interval);
+    
+    setTimeout(async ()=>{
+        listener.style.gap = '80px';
+        listener.querySelectorAll("h2").forEach(e=>{
+         e.style.opacity = '0';
+        })
 
+    })
+
+    }
+    catch(e){
+
+    }
     strm.onclick = ()=>{
-            container2.querySelectorAll("h2")[1].innerText = "Listening ...";
-            strm.innerHTML = `<i class="fa-sharp fa-solid fa-circle-notch fa-spin"></i>`;
-            start_recording()
+        flag = 0;
+        fa_keyboard.style.zIndex='0';
+        start_recording();
+        console.log(flag)
         }
     
 
@@ -112,6 +145,8 @@ async function connect_ws(user_id){
     // Connection closed event 
     socket.onclose = function(event) { 
         console.log('WebSocket is closed.'); 
+        ws_status.innerText = "Disconnected";
+        ws_status.style.backgroundColor = "grey";
     }; 
     
     // Error event 
@@ -123,7 +158,8 @@ async function connect_ws(user_id){
     socket.onmessage = function(event) { 
         
         console.log('Message from server:', event.data);
-        receiveResponses(event.data)
+        if (flag == 0)
+         receiveResponses(event.data);
         // const messagesDiv = document.getElementById('messages');
         // messagesDiv.innerHTML += `<p>${event.data}</p>`; 
     };
@@ -133,22 +169,59 @@ async function connect_ws(user_id){
 }
 
 async function start_connection(){
+  
     try { 
-        socket = await connect_ws('Akshat'); 
+        socket = await connect_ws(uname.value); 
         console.log('WebSocket connected successfully.'); // Example of sending a message through WebSocket 
-        start_recording();
-        
+        ws_status.innerText = "Connected";
+        ws_status.style.backgroundColor = "green";
+        ws_status.style.opacity = '1';
+        sendContainer.style.opacity= '1';
+        sendContainer.style.pointerEvents= 'visible';
+        onStartup();
+        // stop_recording();
         }
        
-     
     catch (error) { 
-        console.error('Error during WebSocket connection:', error); 
+            console.error('Error during WebSocket connection:', error); 
+            ws_status.innerText = "Disconnected";
+            ws_status.style.backgroundColor = "grey";
+            ws_status.style.opacity = '1'; 
+            start_connection();    //if failed then keep trying connecting
     }
+
 }
 
+function closeWriter(){
+    setTimeout(start_recording, 1000)
+    fa_keyboard.style.zIndex='0';
+    writer.style.opacity = "0";
+    writer.style.pointerEvents='none';
+    writer.style.width = "35%";
+    
+    fa_keyboard.style.width = '50px';
+    listener.style.right = '50%';
+    
+}
 
+function closeListener(){
+    writer.style.opacity = "1";
+    writer.style.pointerEvents='visible';
+    writer.style.width = "100%";
+    
+    fa_keyboard.style.width = '0px';
+    listener.style.right = '0%';
+    
+    stop_recording();
+    onStartup();
+}
 
-function scrollToBottom() { 
+function onStartup(){
+    strm.onclick = closeWriter;
+    fa_keyboard.onclick = closeListener;
+}
+
+function scrollToBottom(){ 
     response.scrollTo({ top: response.scrollHeight, behavior: 'smooth' }); 
 }
 
@@ -158,33 +231,35 @@ function receiveResponses(message)
      message = JSON.parse(message)
      if(message.responseType == 'user')
      {      
+             while_ai_prompt_generating();
              response.innerHTML = response.innerHTML + `<div class="user"><div>${message.text}</div></div><div class="assistant"><div><i class="fa-solid fa-spinner fa-spin"></i></div></div>`;
      }
      else if(message.responseType == 'assistant' && message.text == 'CALL DALL-E')
      {   
-       
          e[e.length-1].innerHTML = `<div></div><div class = 'image_process'><div><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="revised-prompt"></div>`;
          e[e.length-1].querySelector('div').innerText = 'Generating image ...';
 
          // response.innerHTML = response.innerHTML + `<div class="assistant"></div>`;
      }
      else if('image_url' in message)
-     {
+     {  
+         after_ai_prompt_generated();
          e[e.length-1].querySelector('.image_process').innerHTML = `<img src="${message.image_url}" alt="Not found">`;
          e[e.length-1].querySelector('.revised-prompt').innerText =  message.revised_prompt
      }
     
      else if(message.responseType == 'assistant')
      {  
+        after_ai_prompt_generated();
         e[e.length-1].querySelector('div').innerText = `${message.text}`;
      }
-     else if('Recieved' in message)
-        {  
-            console.log(`${message.Recieved}`);
-            return 0;
-        }
-     else
-         e[e.length-1].innerHTML =`<div>Content Policy Violation</div>`;
+ 
+     else if(message.status == 'error'){
+        // recorder.startRecording();
+        after_ai_prompt_generated();
+        e[e.length-1].innerHTML =`<div>Content Policy Violation</div>`;
+     }
+        
          
      console.table(message)
      scrollToBottom()
@@ -194,37 +269,59 @@ function receiveResponses(message)
 
 
 
-startMic.onclick = async function () {
-    
+start.onclick = async function () {
+
+    if (uname.value == '')
+    {
+        alert('Please enter username !!');
+        return false;
+    }
+    else
+    {   
+        localStorage.setItem('uname', uname.value);
+    }
+
     titleContainer.style.opacity = '0';
     response.style.opacity = '1';
 
-    container2.style.opacity= '1';
-    container2.querySelectorAll("h2")[1].innerText = "Listening ...";
-    strm.innerHTML = `<i class="fa-sharp fa-solid fa-circle-notch fa-spin"></i>`;
-
     responseContainer.style.cssText = `
-                               width: 90vw;
-                               height: 80vh;
+                               width:80%;
+                               height: 70%;
                                opacity: 1;
                               `;
- 
-    
- 
     setTimeout(async ()=>{
         titleContainer.style.display = 'none';
-        container2.style.gap = '40px';
-        container2.querySelectorAll("h2").forEach(e=>{
-         e.style.opacity = '1';
-        })
-
-      
-      start_connection();
-
-    }, 2000)
-
-   
-
+        start_connection();
+    }, 2000);
+     
+    
 };
 
 
+function while_ai_prompt_generating(){
+    if(writer.style.opacity == '0')
+     {  
+          stop_recording();
+          strm.onclick = null;
+          fa_keyboard.style.zIndex='1';
+     }
+        
+}
+
+function after_ai_prompt_generated(){
+    if(writer.style.opacity == '0')
+        {   
+            start_recording();
+            fa_keyboard.style.zIndex='0';
+        }
+}
+
+send.onclick = ()=>{
+    const message = writer.querySelector('textarea');
+    flag = 0;
+    if (message.value != ''){
+       socket.send(message.value);
+       message.value = '';
+    }
+    
+}

@@ -4,6 +4,7 @@ import numpy as np
 # import tensorflow.lite as tflite
 import zipfile
 import time
+import asyncio
 import tflite_runtime.interpreter as tflite
 
 import logging
@@ -42,55 +43,63 @@ async def process_audio_stream(audio_queue, response_queue):
 
     speak = 0
     silence = 0
-        
+    speech = 0
   
     while True:
           try: 
-            audio_data = await audio_queue.get()
-            
-            audio_chunk = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
-            
-            audio_buffer = np.roll(audio_buffer, -len(audio_chunk))
-            audio_buffer[-len(audio_chunk):] = audio_chunk
+                audio_data = await audio_queue.get()
+                
+                audio_chunk = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
+                
+                
+                audio_thres = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) # Calculate the root mean square (RMS) as the threshold value 
+                threshold = np.sqrt(np.mean(np.square(audio_thres)))
+                if(threshold >= 5000):
+                  speech = 1
 
-            # Set the tensor data
-            interpreter.set_tensor(waveform_input_index, audio_buffer)
+                audio_buffer = np.roll(audio_buffer, -len(audio_chunk))
+                audio_buffer[-len(audio_chunk):] = audio_chunk
 
-            # Run the model
-            interpreter.invoke()
-            scores = interpreter.get_tensor(scores_output_index)
+                # Set the tensor data
+                interpreter.set_tensor(waveform_input_index, audio_buffer)
+
+                # Run the model
+                interpreter.invoke()
+                scores = interpreter.get_tensor(scores_output_index)
+            
+                # Get the top classification result
+                top_class_index = scores.argmax()
+                prediction = labels[top_class_index]
+                # await response_queue.put(prediction)
+                # print(response_queue.qsize())
+                # print(prediction, len(audio_data) )
+            
+                logger.info("%s, %d, %d", prediction, len(audio_data), threshold)
+
+                if( prediction == 'Speech' and speech == 1):
+                    audio_chunks.append(audio_data)
+                    # await response_queue.put(audio_data)
+                    speak = speak+1
+                    # silence = 0
+                    # i=5
+
+                elif(speak >= 20  and prediction !='Speech'):
+                    audio_data = b''.join(audio_chunks)
+                    await response_queue.put(audio_data)
+                    audio_chunks = []
+                    silence = 0
+                    speak = 0
+                    speech = 0
+
+                elif(prediction !='Speech'):
+                    silence = silence+1
+                
+                if(silence == 5):
+                    audio_chunks = []
+                    silence = 0
+                    speak = 0
         
-            # Get the top classification result
-            top_class_index = scores.argmax()
-            prediction = labels[top_class_index]
-            # await response_queue.put(prediction)
-            # print(response_queue.qsize())
-            # print(prediction, len(audio_data) )
-           
-            logger.info("%s, %d", prediction, len(audio_data))
-
-            if( prediction == 'Speech'):
-                audio_chunks.append(audio_data)
-                # await response_queue.put(audio_data)
-                speak = speak+1
-                # silence = 0
-                # i=5
-            elif(speak < 10 and prediction !='Speech'):
-                silence = silence+1
-
-            elif(speak >= 10  and prediction !='Speech'):
-                audio_data = b''.join(audio_chunks)
-                await response_queue.put(audio_data)
-                audio_chunks = []
-                silence = 0
-                speak = 0
-
             
-            if(silence == 5):
-                audio_chunks = []
-                silence = 0
-                speak = 0
-
           except Exception as e:
                 # print(audio_data)
                 print(e)
