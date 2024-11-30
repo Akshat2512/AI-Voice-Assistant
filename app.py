@@ -76,7 +76,8 @@ async def chat(websocket: WebSocket, user_id: str):
             # await websocket.send_text(result)
          
         except Exception as e:
-          
+            logger.info(e)
+            
             # print(f"Connection error: {e}")
             await websocket.send_json({"status":"connection closed"})
             await websocket.close()
