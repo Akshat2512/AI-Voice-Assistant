@@ -74,7 +74,7 @@ async def process_audio_stream(audio_queue, response_queue):
                 # print(response_queue.qsize())
                 # print(prediction, len(audio_data) )
             
-                logger.info("%s, %d, %d", prediction, len(audio_data), threshold)
+                # logger.info("%s, %d, %d", prediction, len(audio_data), threshold)
 
                 if( prediction == 'Speech' and speech == 1):
                     audio_chunks.append(audio_data)
