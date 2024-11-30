@@ -104,7 +104,7 @@ async def handle_audio_new(websocket: WebSocket, audio_queue):
             return prompt
 
     except Exception as e:
-        print(e)
+        logger.info(e)
         print("Websocket gets Disconnected")
         return False
         
