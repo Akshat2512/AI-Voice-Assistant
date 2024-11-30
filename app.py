@@ -79,7 +79,7 @@ async def chat(websocket: WebSocket, user_id: str):
             logger.info(e)
             
             # print(f"Connection error: {e}")
-            await websocket.send_json({"status":"connection closed"})
+            await websocket.send_json({"status":e})
             await websocket.close()
         
    
