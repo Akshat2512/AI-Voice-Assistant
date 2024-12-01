@@ -8,7 +8,7 @@ body, html {
     /* padding: 20px 0px; */
     gap: 20px;
     overflow:hidden;
-    height: 100vh;
+    height: 100%;
     width:100vw;
     background-color: #f0f0f0;
     transition: ease-in-out 0.7s;
@@ -28,6 +28,7 @@ body, html {
     transform: translateY(0%);
     transition: ease-in-out 0.7s;
     opacity: 0;
+    min-width: 130px;
     width: 20vw; 
     height: 25vh; 
     /* overflow-y: auto;
@@ -260,9 +261,7 @@ button {
     text-align: left;
     margin: 20px 20px;
     width: 70%;
-}
-.assistant>div:nth-child(2){
-    min-height:300px;
+    max-width: 500px;
 }
 
 .image_process{
