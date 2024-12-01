@@ -264,6 +264,10 @@ button {
     max-width: 500px;
 }
 
+.assistant>div:nth-child(2){
+    aspect-ratio: 1 / 1
+}
+
 .image_process{
     display: flex;
     align-items: center;
