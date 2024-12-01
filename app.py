@@ -132,8 +132,9 @@ async def generate_ai_response(response_queue, websocket, user_id, chat_history,
                 # message = json.dumps(message)
                 await websocket.send_json(message)
                 
-                
+                await asyncio.sleep(0.1)
                 response = generate_response(prompt, os.getenv('OPENAI_API_KEY'), chat_history)  # generate natural language using gpt-4o model  
+                
                 await asyncio.sleep(0.1)
                 
                 if "CALL DALL-E" == response:
