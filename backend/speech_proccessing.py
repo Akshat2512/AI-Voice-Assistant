@@ -25,7 +25,6 @@ waveform_input_index = input_details[0]['index']
 scores_output_index = output_details[0]['index']
 
 
-
 with zipfile.ZipFile(model_path) as z:
     with z.open('yamnet_label_list.txt') as f:
         labels = [line.decode('utf-8').strip() for line in f]
