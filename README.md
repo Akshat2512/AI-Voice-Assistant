@@ -1,11 +1,12 @@
 # Persist Ventures Assignment Overview
 
-I successfully completed an assignment for Persist Ventures, where I developed a sophisticated AI chatbot application using Python Eel for the user interface. The chatbot leverages advanced AI models to provide a rich, interactive user experience.
+I successfully completed an assignment for Persist Ventures, where I developed and deployed a sophisticated AI chatbot application using FastAPI and Azure Cloud Platform. The chatbot leverages advanced AI models to provide a rich, interactive user experience.
 
 ## Technologies Used
 
-- **Python Eel**: For creating the web-based UI of the chatbot.
-- **FastAPI**: To handle continuous streams of audio efficiently.
+- **FastAPI**: To handle continuous streams of audio efficiently on server side.
+- **HTML, CSS and Javascript**: For creating web-based UI for the Chatbot and add styling and interactivity to the web-app.
+- **OpenAI**: Various OpenAI Models utilized to provide AI responses based on user's text and voice input.
 
 ### OpenAI Models
 
@@ -18,10 +19,14 @@ I successfully completed an assignment for Persist Ventures, where I developed a
 - **Speech Recognition**: Implemented using OpenAI's Whisper-1 model to convert user speech to text accurately.
 - **Text Response Generation**: Integrated OpenAI's GPT-4o model to handle text-based queries, ensuring conversational relevance and coherence.
 - **Text-to-Image Generation**: Leveraged DALL-E 3 to transform user-provided text into high-quality images.
-- **Continuous Audio Streaming**: Used FastAPI to handle continuous streams of audio, enabling real-time processing and interaction.
+- **Continuous Audio Streaming**: Used FastAPI to handle continuous streams of audio, enabling real-time processing and interaction on server side.
+- **Memory Management for chat**: Implemented a chat memory management feature for each user, ensuring that the chat conversation is maintained in memory as long as the backend instance is running.
 
+Here’s a sneak peek of the frontend and the sample conversation between me and my assistant.
+<p align="center">
+<img src="images/frontend0.png" alt="Image 1" style="height: 350px; width: 500px"><br>
+</p>
 
-After opening app.py file, the main html page will directly be open. Here’s a sneak peek of the continued conversation between me and my assistant.
 <p align="center">
 <img src="images/frontend1.png" alt="Image 1" style="height: 350px; width: 500px"><br>
 </p>
@@ -42,7 +47,7 @@ After opening app.py file, the main html page will directly be open. Here’s a 
 
 ### Design and Development
 - Designed the architecture of the chatbot application, ensuring seamless integration of various AI models.
-- Developed the front-end using Python Eel, creating an intuitive and user-friendly interface.
+- Developed the front-end using Jinja2 template library, creating an intuitive and user-friendly interface.
 
 ### Integration of AI Models
 - Successfully integrated Whisper-1 for efficient and accurate speech recognition.
@@ -52,6 +57,7 @@ After opening app.py file, the main html page will directly be open. Here’s a 
 ### Backend Management
 - Managed and optimized the backend processes to handle real-time user interactions efficiently.
 - Used FastAPI to handle continuous streams of audio, ensuring smooth and responsive audio processing.
+- implemented chat memory management feature until instance is running. 
 - Ensured smooth communication between the UI and the AI models, reducing latency and improving performance.
 
 ## Impact
@@ -74,13 +80,9 @@ Then install required libraries
      pip install -r requirements.txt
 ```
 
-Then for starting application first start the fastapi server i.e., main_server.py then run the application app.py in separate Terminal or run directly using this bash script:
+Then for starting application first start the fastapi server i.e., app.py, run directly using this script in the terminal:
 ```bash
-     python websocket.py &
-     python app.py
+     python uvicorn app:app --host localhost --port 5000 --reload
 ```
-And, to add your api_key as environment variable. You can also create .env file in root directory of your project and to access this environment variable use python-dotenv library to load environment variable
-<br>create .env file
-```
-   $OPENAI_API_KEY=<your_api_key>
-```
+
+then, Go to https://localhost:5000.
