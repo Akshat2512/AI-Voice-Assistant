@@ -244,13 +244,13 @@ function receiveResponses(message)
      {  
          after_ai_prompt_generated();
          e[e.length-1].querySelector('.image_process').innerHTML = `<img src="${message.image_url}" alt="Not found">`;
-         e[e.length-1].querySelector('.revised-prompt').textContent =  message.revised_prompt;
+         e[e.length-1].querySelector('.revised-prompt').innerText =  message.revised_prompt;
      }
     
      else if(message.responseType == 'assistant')
      {  
         after_ai_prompt_generated();
-        e[e.length-1].querySelector('div').textContent = `${message.text}`;
+        e[e.length-1].querySelector('div').innerText = `${message.text}`;
      }
  
      else if(message.status == 'error'){

@@ -51,7 +51,6 @@ async def process_audio_stream(audio_queue, response_queue):
                 
                 audio_chunk = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
                 
-
                 audio_buffer = np.roll(audio_buffer, -len(audio_chunk))
                 audio_buffer[-len(audio_chunk):] = audio_chunk
 
@@ -92,7 +91,7 @@ async def process_audio_stream(audio_queue, response_queue):
                     speak = 0
                     speech = 0
                 
-                elif(speak >= 20  and prediction != 'Speech' and speech==0) :
+                elif(speak >= 20  and prediction != 'Speech' and speech==0):
                     audio_chunks = []
                     silence = 0
                     speak = 0
