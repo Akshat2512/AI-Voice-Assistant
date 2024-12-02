@@ -80,9 +80,9 @@ Then install required libraries
      pip install -r requirements.txt
 ```
 
-Then for starting application first start the fastapi server i.e., app.py, run directly using this script in the terminal:
+Then for starting application, first start the fastapi server i.e., app.py, run directly using this script in the terminal:
 ```bash
-     python uvicorn app:app --host localhost --port 5000 --reload
+    uvicorn app:app --host localhost --port 5000 --reload
 ```
 
 then, Go to https://localhost:5000.
