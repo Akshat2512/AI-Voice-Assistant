@@ -51,11 +51,6 @@ async def process_audio_stream(audio_queue, response_queue):
                 
                 audio_chunk = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
                 
-                
-                audio_thres = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) # Calculate the root mean square (RMS) as the threshold value 
-                threshold = np.sqrt(np.mean(np.square(audio_thres)))
-                if(threshold >= 5000):
-                  speech = 1
 
                 audio_buffer = np.roll(audio_buffer, -len(audio_chunk))
                 audio_buffer[-len(audio_chunk):] = audio_chunk
@@ -74,30 +69,41 @@ async def process_audio_stream(audio_queue, response_queue):
                 # print(response_queue.qsize())
                 # print(prediction, len(audio_data) )
             
-                # logger.info("%s, %d, %d", prediction, len(audio_data), threshold)
+                # logger.info("%s, %d", prediction, len(audio_data))
 
-                if( prediction == 'Speech' and speech == 1):
+                if( prediction == 'Speech'):
+                    audio_thres = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) # Calculate the root mean square (RMS) as the threshold value 
+                    threshold = np.sqrt(np.mean(np.square(audio_thres)))
+                    if(threshold >= 5000):
+                      speech = 1
+                      
                     audio_chunks.append(audio_data)
-                    # await response_queue.put(audio_data)
                     speak = speak+1
                     # silence = 0
                     # i=5
-
-                elif(speak >= 20  and prediction !='Speech'):
+                elif(speak < 20 and prediction != 'Speech'):
+                    silence = silence+1
+                
+                elif(speak >= 20  and prediction != 'Speech' and speech==1):
                     audio_data = b''.join(audio_chunks)
                     await response_queue.put(audio_data)
                     audio_chunks = []
                     silence = 0
                     speak = 0
                     speech = 0
-
-                elif(prediction !='Speech'):
-                    silence = silence+1
                 
+                elif(speak >= 20  and prediction != 'Speech' and speech==0) :
+                    audio_chunks = []
+                    silence = 0
+                    speak = 0
+                    speech = 0
+                  
+
                 if(silence == 5):
                     audio_chunks = []
                     silence = 0
                     speak = 0
+                    speech = 0
         
             
           except Exception as e:
