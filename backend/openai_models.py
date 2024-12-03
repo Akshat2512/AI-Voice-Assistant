@@ -88,6 +88,7 @@ def generate_image_response(prompt, API_KEY):  # Generate image from text using 
             n=1
         )
         image_url = response.data[0]
+        print(response.data)
         return image_url
 
     except Exception as e:
