@@ -20,7 +20,7 @@ I successfully completed an assignment for Persist Ventures, where I developed a
 - **Text Response Generation**: Integrated OpenAI's GPT-4o model to handle text-based queries, ensuring conversational relevance and coherence.
 - **Text-to-Image Generation**: Leveraged DALL-E 3 to transform user-provided text into high-quality images.
 - **Continuous Audio Streaming**: Used FastAPI to handle continuous streams of audio, enabling real-time processing and interaction on server side.
-- **Chat retention feature**: Implemented a chat memory management feature for each user, ensuring that the chat conversation is maintained in memory as long as the backend instance is running.
+- **Memory Retention Feature**: Implemented a chat memory management feature for each user, ensuring that the chat conversation is maintained in memory as long as the backend instance is running.
 
 Here’s a sneak peek of the frontend and the sample conversation between me and my assistant.
 <p align="center">
