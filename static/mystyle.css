@@ -291,3 +291,12 @@ img{
     border-radius:17px;
     width: 100%;
 }
+
+#credit{
+    display: flex;
+    justify-content: center;
+    /* border: 1px solid black; */
+    width: 400px;
+    gap: 10px;
+    padding: 10px;
+}
