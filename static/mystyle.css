@@ -254,7 +254,7 @@ button {
     /* width: 100%; */
     justify-content: end;
     align-items: end;
-    margin: 20px;
+
     /* text-align: right; */
     flex-direction: column;
   
@@ -298,5 +298,5 @@ img{
     /* border: 1px solid black; */
     width: 400px;
     gap: 10px;
-    padding: 10px;
+    padding-bottom: 10px;
 }
