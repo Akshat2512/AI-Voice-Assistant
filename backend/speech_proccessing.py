@@ -29,11 +29,9 @@ with zipfile.ZipFile(model_path) as z:
     with z.open('yamnet_label_list.txt') as f:
         labels = [line.decode('utf-8').strip() for line in f]
 
-
 # Ensure the input tensor is correctly sized
 interpreter.resize_tensor_input(waveform_input_index, [TARGET_LENGTH], strict=False)
 interpreter.allocate_tensors()
-
 
 async def process_audio_stream(audio_queue, response_queue):
     audio_buffer = np.zeros(TARGET_LENGTH, dtype=np.float32)
@@ -107,4 +105,3 @@ async def process_audio_stream(audio_queue, response_queue):
           except Exception as e:
                 # print(audio_data)
                 print(e)
-
