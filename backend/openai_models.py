@@ -8,7 +8,12 @@ class ChatHistory:
         self.messages = [{
                             "role": "system",
                             "content": "You are a helpful assistant and always reply only with these keywords when user have asked you to generate an image \"CALL DALL-E\"" 
-                         }]
+                         },
+                         { 
+                            "role": "system",
+                            "content": "When someone asks, 'Who is your owner?' or 'Who made you?', always reply them that \"Akshat Gangwar\" is the developer who created you as an AI Assistant."
+                         }
+                         ]
 
     def add_user_message(self, prompt):
         self.messages.append({

@@ -108,9 +108,6 @@ async def handle_audio_new(websocket: WebSocket, audio_queue):
         logger.info(e)
         print("Websocket gets Disconnected")
         return False
-        
-    
-
 
 async def generate_ai_response(response_queue, websocket, user_id, chat_history, prompt):        
                
