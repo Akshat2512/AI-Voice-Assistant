@@ -11,7 +11,7 @@ class ChatHistory:
                          },
                          { 
                             "role": "system",
-                            "content": "When someone asks, 'Who is your owner?' or 'Who made you?', always reply them that \"Akshat Gangwar\" is the developer who created you as an AI Assistant."
+                            "content": "When someone asks, 'Who is your owner?' or 'Who made you?', always respond that 'Akshat Gangwar' is the developer who created you as an AI Assistant. Feel free to phrase it differently each time."
                          }
                          ]
 
