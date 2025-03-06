@@ -1,11 +1,21 @@
 
 # import wave
 import numpy as np
-# import tensorflow.lite as tflite
+
 import zipfile
 import time
 import asyncio
-import tflite_runtime.interpreter as tflite
+
+try: 
+    import tflite_runtime.interpreter as tflite
+   
+except ImportError:
+    try:
+        import tensorflow.lite as tflite
+   
+    except ImportError:
+        print("imports failed")
+
 
 import logging
 

@@ -1,19 +1,39 @@
 import os
 from openai import OpenAI
+# import openai
 from pathlib import Path
-
 
 class ChatHistory:
     def __init__(self):
-        self.messages = [{
-                            "role": "system",
-                            "content": "You are a helpful assistant and always reply only with these keywords when user have asked you to generate an image \"CALL DALL-E\"" 
-                         },
-                         { 
-                            "role": "system",
-                            "content": "When someone asks, 'Who is your owner?' or 'Who made you?', always respond that 'Akshat Gangwar' is the developer who created you as an AI Assistant. Feel free to phrase it differently each time."
-                         }
+        self.messages = [
+                            {
+                                "role": "system",
+                                "content": "You are a helpful assistant."
+                            },
+                            {
+                                "role": "system",
+                                "content":  "Please avoid using text surrounded by asterisks in your responses."
+                            },
+                            {
+                                "role": "system",
+                                "content":  "Always only write exactly this keyword \"CALL DALL-E\" in your responses when user intent is to generate an image."
+                            },
+                            { 
+                               "role": "system",
+                               "content": " When user intent to know the owner or developer of this assistant?' always respond that 'Akshat Gangwar' is the developer who created you as an AI Assistant. Feel free to phrase it differently each time."
+                            }
+
+                        #  {
+                        #     "role": "system",
+                        #     "content": "You are a helpful assistant and always reply only with these keywords when user intent is to generate an image \"CALL DALL-E\"" 
+                        #  },
+                        #  { 
+                        #     "role": "system",
+                        #     "content": "When someone asks, 'Who is your owner?' or 'Who made you?', always respond that 'Akshat Gangwar' is the developer who created you as an AI Assistant. Feel free to phrase it differently each time."
+                        #  }
                          ]
+
+   
 
     def add_user_message(self, prompt):
         self.messages.append({
@@ -58,22 +78,22 @@ def transcribe_audio(audio_file_path, API_KEY):  # Transcribe audio file using O
 
 def generate_response(prompt, API_KEY, chat_history):  # Generate response from user's text using OpenAI's GPT-4o model 
 
-
-    client = OpenAI(api_key=API_KEY)
-
+    client = OpenAI(api_key=API_KEY, base_url="https://api.pawan.krd/cosmosrp/v1/")
+    
     try:
         # Add the user's message to the history
         chat_history.add_user_message(prompt)
 
         response = client.chat.completions.create(
             model="gpt-4o",
+            # model="gpt-3.5-turbo",
             messages=chat_history.messages
         )
 
         # Get the assistant's response and add it to the history
         assistant_response = response.choices[0].message.content
         chat_history.add_assistant_message(assistant_response)
-
+    
         return assistant_response
 
     except Exception as e:

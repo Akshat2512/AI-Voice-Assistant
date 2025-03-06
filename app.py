@@ -134,7 +134,7 @@ async def generate_ai_response(response_queue, websocket, user_id, chat_history,
                 
                 await asyncio.sleep(0.1)
                 
-                if "CALL DALL-E" == response:
+                if "CALL DALL-E" in response:
                     message = {"responseType" : "assistant", "text": response}
                     # message = json.dumps(message)
                     await websocket.send_json(message)
@@ -184,8 +184,8 @@ def save_audio_to_file(audio_data, file_path):    # save audio to the folder tem
           return 'file is short'
   
 
-# if __name__ == '__main__':
-#    uvicorn.run(app, host='0.0.0.0', port=5000)
+if __name__ == '__main__':
+   uvicorn.run(app, host='0.0.0.0', port=5000)
 #    uvicorn.run(app, host='localhost', port=5000)
 
    

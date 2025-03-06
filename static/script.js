@@ -233,7 +233,7 @@ function receiveResponses(message)
              while_ai_prompt_generating();
              response.innerHTML = response.innerHTML + `<div class="user"><div>${message.text}</div></div><div class="assistant"><div><i class="fa-solid fa-spinner fa-spin"></i></div></div>`;
      }
-     else if(message.responseType == 'assistant' && message.text == 'CALL DALL-E')
+     else if(message.responseType == 'assistant' && message.text.includes('CALL DALL-E'))
      {   
          e[e.length-1].innerHTML = `<div></div><div class = 'image_process'><div><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="revised-prompt"></div>`;
          e[e.length-1].querySelector('div').innerText = 'Generating image ...';
