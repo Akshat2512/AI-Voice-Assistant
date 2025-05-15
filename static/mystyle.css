@@ -1,0 +1,304 @@
+body, html {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content:center;
+    margin:0px;
+    /* padding: 20px 0px; */
+    gap: 20px;
+    overflow:hidden;
+    height: 100%;
+    width:100vw;
+    background-color: #f0f0f0;
+    transition: ease-in-out 0.7s;
+}
+
+#message-container {  
+    /* position:relative; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    text-align: center;
+    transform: translateY(0%);
+    transition: ease-in-out 0.7s;
+    opacity: 0;
+    min-width: 130px;
+    width: 20vw; 
+    height: 25vh; 
+    /* overflow-y: auto;
+    overflow-x: hidden; */
+} 
+#title-container{
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+    /* transform: translateY(50%); */
+    transition: ease-in-out 0.7s;
+    width: 100%;
+}
+#title-container > div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* border:1px solid black; */
+    flex-direction: column;
+    gap:70px;
+    /* transform: translateY(0%); */
+    transition: ease-in-out 0.7s;
+}
+#uname{
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border: 1px solid grey;
+    max-width:200px;
+    text-align: center;
+}
+
+#send-container{
+    /* display: none; */
+    position: relative;
+    opacity: 0;
+    display: flex;
+    justify-content: flex-start;
+    /* border: 1px solid black; */
+    flex-direction: row;
+    pointer-events: none;
+    user-select:none;
+    transition: ease-in-out 0.7s;
+    width: 90vw;
+}
+
+
+#writer{
+    opacity: 1;
+    display: flex;
+    align-items: center;
+    gap:40px;
+    /* border: 1px solid black; */
+    padding: 20px;
+    z-index:2;
+    transition: ease-in-out 0.7s;
+    /* height: inherit; */
+    max-width: 80%;
+    width: 70%;
+}
+
+#writer> :nth-child(1) { 
+    resize: none; 
+    overflow: auto; 
+    width: 100%;  
+    height: 40px;    
+}
+
+#writer>div:nth-child(2){
+    display: flex;
+    align-items: center;
+    height:10px;
+    padding: 8px 10px 8px 8px;
+    background: #0288d1;
+    border-radius: 10px;
+    transform: scale(1.5);
+    box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 48%);
+
+    
+}
+
+#writer>div:nth-child(2) i{
+    transform: rotateZ(40deg);
+}
+
+#listener > h2{
+    /* display:none; */
+    opacity: 0;
+    z-index: 1;
+    text-wrap: nowrap;
+    transition: ease-in-out 0.7s;
+    background-color: #f0f0f0;
+}
+
+#listener{
+
+    position: absolute;
+    right:10px;
+    top:10px;
+    display: flex;
+    flex-direction: row;
+    justify-content:center ;
+    align-items: center;
+    gap:80px;
+    opacity: 1;
+    width: 0%;
+    /* border: 1px solid black; */
+    transition: ease-in-out 0.7s;
+   
+}
+
+#stream:hover{
+    background: #026aa3;
+    transition: ease-in-out 0.2s;
+}
+
+#fa-keyboard{
+    z-index: 0;
+    display: flex;
+    margin-left:auto;
+    width:0px;
+    justify-content:center;
+    align-items: center;
+    overflow: hidden;
+    /* border: 1px solid black; */
+    transition: ease-in-out 0.7s;
+    background-color: #f0f0f0;
+    
+    
+}
+#fa-keyboard:hover{
+    background: grey;
+     transition: ease-in-out 0.2s;
+}
+
+#fa-keyboard i{
+    transform: scale(1.8);
+}
+
+#stream{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color:rgb(35 35 35);
+    height:18px;
+    padding: 5px;
+    background: #0288d1;
+    transform: scale(1.8);
+    border-radius: 20px;
+    font-size: 18px;
+    box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 48%);
+}
+
+#status{
+    margin:20px 7% 0px ;
+    align-self: flex-end;
+    opacity: 0;
+    color:rgb(28 56 57);
+    height:18px;
+    padding: 10px;
+    background: #7c7c7c;
+    border-radius: 20px;
+    font-size: 18px;
+    transition: ease-in-out 0.7s;
+}
+
+button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    border: none;
+    background-color: #0288d1;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: ease-in-out 0.7s;
+    font-size: 20px;
+}
+
+.response{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow-x: hidden;
+    overflow-y: auto;
+    opacity: 0;
+    transition: ease-in-out 0.7s;
+    /* border: 1px solid black; */
+}
+
+.user, .listening{
+    
+    display: flex;
+    /* width: 100%; */
+    justify-content: start;
+   
+    /* max-width: 100%;  */
+    white-space: pre;
+
+}
+.user>div, .listening>div{
+    padding:10px;
+    border-radius: 20px;
+    background-color: bisque;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.326);
+    text-align: left;
+    margin: 20px;
+    width: 50%;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    font-family: monospace;
+    color: #464646;
+    font-size: 15px;
+}
+
+.assistant{
+    /* flex-grow: 2; */
+    /* border: 1px solid black; */
+    display: flex;
+    /* flex-direction: column; */
+    /* width: 100%; */
+    justify-content: end;
+    align-items: end;
+
+    /* text-align: right; */
+    flex-direction: column;
+  
+
+}
+.assistant>div{
+    padding:10px;
+    border-radius: 20px;
+    background-color: rgba(128, 128, 128, 0.573);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.329);
+    text-align: left;
+    margin: 20px 20px;
+    width: 70%;
+    max-width: 500px;
+    white-space: pre-wrap;
+    font-family: 'Lucida Console', Monaco, monospace;
+   
+}
+
+.assistant>div:nth-child(2){
+    aspect-ratio: 1 / 1
+}
+
+.process{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background-color: gray;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+}
+
+
+
+img{
+    border-radius:17px;
+    width: 100%;
+}
+
+#credit{
+    display: flex;
+    justify-content: center;
+    /* border: 1px solid black; */
+    width: 400px;
+    gap: 10px;
+    padding-bottom: 10px;
+}
