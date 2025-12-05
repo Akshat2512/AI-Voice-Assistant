@@ -16,7 +16,8 @@ class ChatHistory:
                                 "role": "system",
                                 "content": "You are a helpful assistant."
                             }
-                        ]
+
+                         ]
 
         self.tools = [
             {
