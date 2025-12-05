@@ -31,7 +31,15 @@ class ChatHistory:
 
                          ]
 
-   
+        self.tools = [
+            {
+                "type": "function",
+                "function": {
+                "name": "generate_image",
+                "description": "Generate an image based on users text, if user ask for image generation."
+                }
+            }
+            ]
 
     def add_user_message(self, prompt):
         self.messages.append({
@@ -45,15 +53,15 @@ class ChatHistory:
             "content": prompt
         })
 
-transcript_client = OpenAI(api_key = os.getenv("GEMINI_API_KEY"), base_url = os.getenv("GEMINI_BASE_URL"))
+gen_client = OpenAI(api_key = os.getenv("GEMINI_API_KEY"), base_url = os.getenv("GEMINI_BASE_URL"))
 
-async def transcribe_audio( websocket, audio_file):  # Transcribe audio file using OpenAI's Whisper-1 model
+async def transcribe_audio( websocket, audio_file):  # Transcribe audio file using Gemini 2.0 flash model
     
     base64_audio = base64.b64encode(audio_file.read()).decode('utf-8')
 
     try:
                        
-            response = transcript_client.chat.completions.create(
+            response = gen_client.chat.completions.create(
                     model="gemini-2.0-flash",
                     messages=[
                         {
@@ -87,8 +95,6 @@ async def transcribe_audio( websocket, audio_file):  # Transcribe audio file usi
 
     
     
-
-client = Together(api_key = os.getenv("META_API_KEY"))
 async def generate_response(prompt, chat_history, index, websocket):  # Generate response from user's text using OpenAI's GPT-4o model 
     chat_history.process_lists.append(True)
     print(chat_history.process_lists)
@@ -98,12 +104,17 @@ async def generate_response(prompt, chat_history, index, websocket):  # Generate
     try:
         # Add the user's message to the history
         chat_history.add_user_message(prompt)
+        
+                     
+        response = gen_client.chat.completions.create(
+                    model="gemini-2.0-flash",
+                    messages=chat_history.messages,
+                    tools=chat_history.tools,
+                    tool_choice="auto",
+                    stream=True
+                )
+            
 
-        response = client.chat.completions.create(
-            model= "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
-            messages=chat_history.messages,
-            stream = True
-        )
         for chunk in response:
             time.sleep(0.01)
             # assistant_response = response.choices[0].message.content
@@ -114,16 +125,9 @@ async def generate_response(prompt, chat_history, index, websocket):  # Generate
               await websocket.send_json({"Type": "assistant", "stream": "</stream>"})
               return
             content = chunk.choices[0].delta.content or ""
-            # pipe.append(content) 
-            await websocket.send_json({"responseType": "assistant", "text": content})
-            assistant_response = assistant_response + content
-            # print(content, end="", flush=True)
-        
-        chat_history.process_lists[index] = False
-        await websocket.send_json({"responseType": "assistant", "text": "</stream>"})
-        chat_history.add_assistant_message(assistant_response)
-        # print("\""+assistant_response+"\"")
-        if assistant_response == "<FLUX-1>":
+            
+            tool_call = chunk.choices[0].delta.tool_calls
+            if(tool_call and tool_call[0].function.name == "generate_image"):
                     message = {"responseType" : "assistant", "text": "<FLUX-1>"}
                     # message = json.dumps(message)
                     await websocket.send_json(message)
@@ -138,9 +142,16 @@ async def generate_response(prompt, chat_history, index, websocket):  # Generate
                         await websocket.send_json({"status": "error"})
                         return False
                     # message = json.dumps(message)
-                    await websocket.send_json(message)
-                    # print(message)
-               
+                    await websocket.send_json(message) 
+            # pipe.append(content) 
+            await websocket.send_json({"responseType": "assistant", "text": content})
+            assistant_response = assistant_response + content
+            # print(content, end="", flush=True)
+        
+        chat_history.process_lists[index] = False
+        await websocket.send_json({"responseType": "assistant", "text": "</stream>"})
+        chat_history.add_assistant_message(assistant_response)
+  
 
                 # logger.info('GPT-4o AI: %s', response)
 
@@ -148,6 +159,7 @@ async def generate_response(prompt, chat_history, index, websocket):  # Generate
         return str(e)
 
 
+client = Together(api_key=os.getenv("META_API_KEY"))
 def generate_image_response(prompt):  # Generate image from text using DALL-E-3 model
 
     # client = OpenAI(api_key=API_KEY)
@@ -170,3 +182,15 @@ def generate_image_response(prompt):  # Generate image from text using DALL-E-3 
         return str(e)
 
 
+# def generate_image(prompt):
+        
+#     response = client.images.generate(
+#         model="imagen-3.0-generate-002",
+#         prompt="a portrait of a sheepadoodle wearing a cape",
+#         response_format='b64_json',
+#         n=1,
+#     )
+
+#     for image_data in response.data:
+#      image = Image.open(BytesIO(base64.b64decode(image_data.b64_json)))
+#     image.show()
