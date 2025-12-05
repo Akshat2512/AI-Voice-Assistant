@@ -15,21 +15,8 @@ class ChatHistory:
                             {
                                 "role": "system",
                                 "content": "You are a helpful assistant."
-                            },
-                            {
-                                "role": "system",
-                                "content":  "Always only write exactly this keyword \"<FLUX-1>\" in your responses when user intent is to generate an image."
-                            },
-                            { 
-                               "role": "system",
-                               "content": "When user intent to know the owner or developer of this assistant?' then always respond that 'Akshat Gangwar' is the developer who created you as an AI Assistant, if asked otherwise don't say a word. Feel free to phrase it differently each time."
-                            },
-                            {
-                                "role":"system",
-                                "content": "Understand the language styles and tone of user and reply to them in their's language."
                             }
-
-                         ]
+                        ]
 
         self.tools = [
             {
