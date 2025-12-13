@@ -16,7 +16,7 @@ class ChatHistory:
         self.messages = [
                             {
                                 "role": "system",
-                                "content": "You are a helpful assistant. You respond to the user queries in a concise manner and whenever someone ask about your owner tell Akshat Gangwar is your developer"
+                                "content": "You are a helpful assistant. You respond to the user queries in a concise manner and whenever someone ask about your owner, tell them Your developer is Akshat Gangwar"
                             }
 
                          ]
