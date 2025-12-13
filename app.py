@@ -28,6 +28,8 @@ users_directory = {}    # maintain users database or their chat history in their
 
 app.mount("/static", StaticFiles(directory="static"), name="static") 
 templates = Jinja2Templates(directory="templates")
+templates.env.auto_reload = True
+# templates.env.cache = False
 
 
 @app.get("/", response_class=HTMLResponse) 

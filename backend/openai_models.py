@@ -3,6 +3,8 @@ from openai import OpenAI
 from together import Together
 import time
 import base64
+import json
+import asyncio
 
 from dotenv import load_dotenv # Load environment variables from .env file 
 
@@ -14,7 +16,7 @@ class ChatHistory:
         self.messages = [
                             {
                                 "role": "system",
-                                "content": "You are a helpful assistant."
+                                "content": "You are a helpful assistant. You respond to the user queries in a concise manner and your developer is Akshat Gangwar"
                             }
 
                          ]
@@ -30,7 +32,7 @@ class ChatHistory:
                     "properties": {
                         "image_description": {
                             "type": "string",
-                            "description": "Describe the text prompt for the image to be generated."
+                            "description": "Write the revised prompt for image to be generated."
                         }
                     },
                     "required": ["image_description"]
@@ -60,7 +62,8 @@ async def transcribe_audio( websocket, audio_file):  # Transcribe audio file usi
     try:
                        
             response = gen_client.chat.completions.create(
-                    model="gemini-2.0-flash",
+                    # model="gemini-2.5-flash",
+                    model="gemini-robotics-er-1.5-preview",
                     messages=[
                         {
                         "role": "user",
@@ -105,7 +108,8 @@ async def generate_response(prompt, chat_history, index, websocket):  # Generate
         
                      
         response = gen_client.chat.completions.create(
-                    model="gemini-2.0-flash",
+                    # model="gemini-2.5-flash",
+                    model="gemini-robotics-er-1.5-preview",
                     messages=chat_history.messages,
                     tools=chat_history.tools,
                     tool_choice="auto",
@@ -114,7 +118,7 @@ async def generate_response(prompt, chat_history, index, websocket):  # Generate
         
 
         for chunk in response:
-            time.sleep(0.01)
+            await asyncio.sleep(0.01)
             # assistant_response = response.choices[0].message.content
             # chat_history.add_assistant_message(assistant_response)
             
@@ -131,11 +135,12 @@ async def generate_response(prompt, chat_history, index, websocket):  # Generate
                     await websocket.send_json(message)
 
                     print('Generating Image ...')
-                
-                    image = generate_image_response(prompt) # generate image from text using DALL-E-3 model
-                        
+                      
+                    img_desc = json.loads(tool_call[0].function.arguments)["image_description"]
+                    image = generate_image_response(img_desc) # generate image from text using Black forest model
+
                     try:
-                        message = {"responseType" : "assistant", "revised_prompt":"Here, is your image", "image_url": image.url}
+                        message = {"responseType" : "assistant", "revised_prompt":img_desc, "image_url": image.url}
                     except Exception as e:
                         await websocket.send_json({"status": "error"})
                         return False
@@ -163,7 +168,7 @@ def generate_image_response(prompt):  # Generate image from text using DALL-E-3 
     # client = OpenAI(api_key=API_KEY)
     try:
         response = client.images.generate(
-            model="c",
+            model="black-forest-labs/FLUX.1-schnell-Free",
             prompt=prompt,
             steps=4,
             size="1024x1024",
@@ -171,7 +176,7 @@ def generate_image_response(prompt):  # Generate image from text using DALL-E-3 
             n=1
         )
         result = response.data[0]
-        print(response.data)
+        # print(response.data)
         return result
 
     except Exception as e:

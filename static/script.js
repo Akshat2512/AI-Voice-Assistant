@@ -147,7 +147,6 @@ async function connect_ws(user_id){
         }
    
         const socket = new WebSocket(`${ws_protocol}${window.location.hostname}:${window.location.port}/ws/`+user_id);
-        console.log(socket.protocol);
         socket.onopen = function(event) { 
             resolve(socket)
         }; 
@@ -159,7 +158,7 @@ async function connect_ws(user_id){
             ws_status.style.backgroundColor = "grey";
         }; 
         
-        // Error event 
+        // Error event
         socket.onerror = function(error) { 
             console.error('WebSocket error:', error); 
             reject(error)
