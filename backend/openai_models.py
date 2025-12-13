@@ -24,7 +24,17 @@ class ChatHistory:
                 "type": "function",
                 "function": {
                 "name": "generate_image",
-                "description": "Generate an image based on users text, if user ask for image generation."
+                "description": "Generate an image based on users text, if user ask for image generation.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "image_description": {
+                            "type": "string",
+                            "description": "Describe the text prompt for the image to be generated."
+                        }
+                    },
+                    "required": ["image_description"]
+                 }
                 }
             }
             ]
@@ -101,7 +111,7 @@ async def generate_response(prompt, chat_history, index, websocket):  # Generate
                     tool_choice="auto",
                     stream=True
                 )
-            
+        
 
         for chunk in response:
             time.sleep(0.01)
@@ -151,10 +161,9 @@ client = Together(api_key=os.getenv("META_API_KEY"))
 def generate_image_response(prompt):  # Generate image from text using DALL-E-3 model
 
     # client = OpenAI(api_key=API_KEY)
-
     try:
         response = client.images.generate(
-            model="black-forest-labs/FLUX.1-schnell-Free",
+            model="c",
             prompt=prompt,
             steps=4,
             size="1024x1024",

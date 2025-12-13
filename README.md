@@ -6,19 +6,18 @@ I successfully developed and deployed a sophisticated AI chatbot application usi
 
 - **FastAPI**: To handle continuous streams of audio efficiently on server side.
 - **HTML, CSS and Javascript**: For creating web-based UI for the Chatbot and add styling and interactivity to the web-app.
-- **OpenAI**: Various OpenAI Models utilized to provide AI responses based on user's text and voice input.
+- **AI models**: Various AI models utilized to provide AI responses based on user's text and voice input.
 
-### OpenAI Models
+### AI Models
 
-- **Whisper-1**: Used for speech-to-text conversion, enabling voice interaction.
-- **GPT-4o**: Utilized for generating natural language responses to user inputs.
-- **DALL-E 3**: Employed for creating images from textual descriptions provided by users.
+- **Gemini 2.0 Flash**: Utilized for generating natural language responses to user inputs and speech-to-text conversion, enabling voice interaction.
+- **black-forest-labs/FLUX.1-schnell-Free**: Employed for creating images from textual descriptions provided by users.
 
 ## Features
 
-- **Speech Recognition**: Implemented using OpenAI's Whisper-1 model to convert user speech to text accurately.
-- **Text Response Generation**: Integrated OpenAI's GPT-4o model to handle text-based queries, ensuring conversational relevance and coherence.
-- **Text-to-Image Generation**: Leveraged DALL-E 3 to transform user-provided text into high-quality images.
+- **Speech Recognition**: Implemented using Gemini 2.0 Flash model to convert user speech to text accurately.
+- **Text Response Generation**: Integrated Google's Gemini model to handle text-based queries, ensuring conversational relevance and coherence.
+- **Text-to-Image Generation**: Leveraged black-forest's model to transform user-provided text into high-quality images.
 - **Continuous Audio Streaming**: Used FastAPI to handle continuous streams of audio, enabling real-time processing and interaction on server side.
 - **Memory Retention Feature**: Implemented a chat memory management feature for each user, ensuring that the chat conversation is maintained in memory as long as the backend instance is running.
 
@@ -50,9 +49,8 @@ Here’s a sneak peek of the frontend and the sample conversation between me and
 - Developed the front-end using Jinja2 template library, creating an intuitive and user-friendly interface.
 
 ### Integration of AI Models
-- Successfully integrated Whisper-1 for efficient and accurate speech recognition.
-- Integrated GPT-4o to handle text-based queries, ensuring conversational relevance and coherence.
-- Implemented DALL-E 3 for generating images based on user descriptions, enhancing the visual interaction capabilities of the chatbot.
+- Successfully integrated Gemini 2.0 Flash to handle text-based queries, ensuring conversational relevance and accurate speech recognition.
+- Implemented Black-Forest's FLUX-1 model for generating images based on user descriptions, enhancing the visual interaction capabilities of the chatbot.
 
 ### Backend Management
 - Managed and optimized the backend processes to handle real-time user interactions efficiently.

@@ -137,34 +137,44 @@ function stop_recording(){
 async function connect_ws(user_id){
 
     return new Promise((resolve, reject) => {
-    const socket = new WebSocket(`wss://${window.location.hostname}:${window.location.port}/ws/`+user_id);
-    socket.onopen = function(event) { 
-        resolve(socket)
-     }; 
-    
-    // Connection closed event 
-    socket.onclose = function(event) { 
-        console.log('WebSocket is closed.'); 
-        ws_status.innerText = "Disconnected";
-        ws_status.style.backgroundColor = "grey";
-    }; 
-    
-    // Error event 
-    socket.onerror = function(error) { 
-        console.error('WebSocket error:', error); 
-        reject(error)
-    };
-    
-    socket.onmessage = function(event) { 
         
-        console.log('Message from server:', event.data);
-        if (flag == 0)
-         receiveResponses(event.data);
-        // const messagesDiv = document.getElementById('messages');
-        // messagesDiv.innerHTML += `<p>${event.data}</p>`; 
-    };
-    
-   });
+        var ws_protocol;
+        if(window.location.hostname == 'localhost'){
+            ws_protocol = 'ws://';
+        }
+        else{
+            ws_protocol = 'wss://';
+        }
+   
+        const socket = new WebSocket(`${ws_protocol}${window.location.hostname}:${window.location.port}/ws/`+user_id);
+        console.log(socket.protocol);
+        socket.onopen = function(event) { 
+            resolve(socket)
+        }; 
+        
+        // Connection closed event 
+        socket.onclose = function(event) { 
+            console.log('WebSocket is closed.'); 
+            ws_status.innerText = "Disconnected";
+            ws_status.style.backgroundColor = "grey";
+        }; 
+        
+        // Error event 
+        socket.onerror = function(error) { 
+            console.error('WebSocket error:', error); 
+            reject(error)
+        };
+        
+        socket.onmessage = function(event) { 
+            
+            console.log('Message from server:', event.data);
+            if (flag == 0)
+            receiveResponses(event.data);
+            // const messagesDiv = document.getElementById('messages');
+            // messagesDiv.innerHTML += `<p>${event.data}</p>`; 
+        };
+        
+    });
 
 }
 
